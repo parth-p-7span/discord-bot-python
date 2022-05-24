@@ -1,0 +1,18 @@
+{
+  "command_1": "/register your-email@7span.com",
+  "command_1_msg": "To register into Seven bot.",
+  "command_2": "/eod",
+  "command_2_msg": "To get task logs with total of current day.",
+  "command_3": "/eod <any date e.g.2021-09-29>",
+  "command_3_msg": "To get task logs with total of a specific date",
+  "evening_clickup_msg": "Please log your ClickUp hours if not done. thank you.",
+  "morning_clickup_msg": "Please verify your yesterday's ClickUp hours.",
+  "err_no_user_found": "No user found with this email!",
+  "err_while_entering_record": "Error while entering record!",
+  "registered_successfully": "Registered Successfully!",
+  "something_went_wrong": "Something went wrong, try later!",
+  "msg_no_log_hours": "you haven't logged any of your tasks for today. please log those tasks before leaving. thank you..",
+  "monthend_message": "Gentle Reminder\nKindly check/revise your ClickUp hours for this month...",
+  "register_first": "Please register first using",
+  "data_refreshed": "Users data has been refreshed!"
+}
