@@ -19,6 +19,7 @@ import func
 intents = discord.Intents.default()
 intents.members = True
 intents.messages = True
+intents.message_content = True
 client = commands.Bot(command_prefix='/', help_command=None, intents=intents)
 
 with open('messages.json', 'r') as f:
@@ -31,24 +32,28 @@ async def on_ready():
     print(f'{client.user} has Awoken!')
 
 
-@client.command()
+@client.command(name="test")
 async def test(ctx):
+    print('-------', ctx.channel, '---', type(ctx.channel))
     await ctx.send(f'Tested!')
 
 
 @client.command()
 async def register(ctx, email):
-    discordId = str(ctx.message.author.id)
-    result = clickup.register(email, discordId)
-    if result == constants.STATUS_NO_CONTENT:
-        await ctx.send(messages['err_no_user_found'])
-    elif result == constants.STATUS_BAD_REQUEST:
-        await ctx.send(messages['err_while_entering_record'])
-    elif result == constants.STATUS_OK:
-        clickup.createJson()
-        await ctx.send(messages['registered_successfully'])
+    if email != '':
+        discordId = str(ctx.message.author.id)
+        result = clickup.register(email, discordId)
+        if result == constants.STATUS_NO_CONTENT:
+            await ctx.send(messages['err_no_user_found'])
+        elif result == constants.STATUS_BAD_REQUEST:
+            await ctx.send(messages['err_while_entering_record'])
+        elif result == constants.STATUS_OK:
+            clickup.createJson()
+            await ctx.send(messages['registered_successfully'])
+        else:
+            await ctx.send(messages['something_went_wrong'])
     else:
-        await ctx.send(messages['something_went_wrong'])
+        await ctx.send('Please provide your email address!')
 
 
 @client.command(aliases=['clear-cache'])
@@ -62,41 +67,44 @@ async def clearCache(ctx):
 
 @client.command()
 async def eod(ctx, date=''):
-    if date == '':
-        dt = datetime.now()
-    else:
-        try:
-            dt = datetime.strptime(date, '%Y-%m-%d')
-        except ValueError:
-            dt = datetime.strptime(date, '%d-%m-%Y')
-
-    discordId = str(ctx.message.author.id)
-
-    start_of_day = datetime(dt.year, dt.month, dt.day, 0, 0, 0)
-    end_of_day = datetime(dt.year, dt.month, dt.day, 23, 59, 59)
-    sTimestamp = str(round(time.mktime(start_of_day.timetuple())) * 1000)
-    eTimestamp = str(round(time.mktime(end_of_day.timetuple())) * 1000)
-
-    try:
-        tasks = clickup.getTasks(sTimestamp, eTimestamp, discordId)
-
-        if len(tasks) > 1:
-            string = tt.to_string(
-                tasks,
-                style=tt.styles.rounded_thick,
-                header=["Task Name", "Hours", "Start", "End"],
-                padding=(0, 3),
-                alignment="lccc"
-            )
-            string = "`" + string + "`"
+    if ctx.channel.type == discord.ChannelType.private:
+        if date == '':
+            dt = datetime.now()
         else:
-            string = messages['msg_no_log_hours']
-        await ctx.send(string)
-    except TypeError:
-        await ctx.send(messages['register_first'] + "`" + messages['command_1'] + "`")
-    except Exception as e:
-        print(type(e))
-        await ctx.send("Something went wrong!")
+            try:
+                dt = datetime.strptime(date, '%Y-%m-%d')
+            except ValueError:
+                dt = datetime.strptime(date, '%d-%m-%Y')
+
+        discordId = str(ctx.message.author.id)
+
+        start_of_day = datetime(dt.year, dt.month, dt.day, 0, 0, 0)
+        end_of_day = datetime(dt.year, dt.month, dt.day, 23, 59, 59)
+        sTimestamp = str(round(time.mktime(start_of_day.timetuple())) * 1000)
+        eTimestamp = str(round(time.mktime(end_of_day.timetuple())) * 1000)
+
+        try:
+            tasks = clickup.getTasks(sTimestamp, eTimestamp, discordId)
+
+            if len(tasks) > 1:
+                string = tt.to_string(
+                    tasks,
+                    style=tt.styles.rounded_thick,
+                    header=["Task Name", "Hours", "Start", "End"],
+                    padding=(0, 3),
+                    alignment="lccc"
+                )
+                string = "`" + string + "`"
+            else:
+                string = messages['msg_no_log_hours']
+            await ctx.send(string)
+        except TypeError:
+            await ctx.send(messages['register_first'] + "`" + messages['command_1'] + "`")
+        except Exception as e:
+            print(type(e))
+            await ctx.send("Something went wrong!")
+    else:
+        await ctx.send(f'Please send personal message to <@{constants.BOT_DISCORD}> for this command to execute.')
 
 
 @client.command()
@@ -204,13 +212,13 @@ async def sendMonthEndMessage():
         await user.send(messages['monthend_message'])
 
 
-async def createThread(date, channel_id, is_day):
+async def createThread(date, channel_id, is_morning):
     print("===> CREATE THREAD")
     channel = client.get_channel(channel_id)
-    if is_day:
-        name = "☀ "+date
+    if is_morning:
+        name = "🌞 " + date
     else:
-        name = "🌑 "+date
+        name = "🌚 " + date
     thread = await channel.create_thread(name=name, type=discord.ChannelType.public_thread)
     await thread.send("Please enter updates of " + date)
 
@@ -243,18 +251,18 @@ async def backgroundJob():
         # create morning thread
         if now.hour == constants.MORNING_THREAD_TIME[0] and now.minute == constants.MORNING_THREAD_TIME[1]:
             date = now.strftime('%d.%m.%Y')
-            await createThread(date, constants.LARAVEL_CHANNEL, False)
-            await createThread(date, constants.JAVA_CHANNEL, False)
-            await createThread(date, constants.DESIGN_CHANNEL, False)
-            await createThread(date, constants.CMS_CHANNEL, False)
-
-        # create evening thread
-        if now.hour == constants.EVENING_THREAD_TIME[0] and now.minute == constants.EVENING_THREAD_TIME[1]:
-            date = now.strftime('%d.%m.%Y')
             await createThread(date, constants.LARAVEL_CHANNEL, True)
             await createThread(date, constants.JAVA_CHANNEL, True)
             await createThread(date, constants.DESIGN_CHANNEL, True)
             await createThread(date, constants.CMS_CHANNEL, True)
+
+        # create evening thread
+        if now.hour == constants.EVENING_THREAD_TIME[0] and now.minute == constants.EVENING_THREAD_TIME[1]:
+            date = now.strftime('%d.%m.%Y')
+            await createThread(date, constants.BOT_TEST_CHANNEL, True)
+            # await createThread(date, constants.JAVA_CHANNEL, False)
+            # await createThread(date, constants.DESIGN_CHANNEL, False)
+            # await createThread(date, constants.CMS_CHANNEL, False)
 
         await asyncio.sleep(60)
 
