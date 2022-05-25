@@ -183,8 +183,6 @@ def getTasksForAllMembers(startDate, endDate):
             endDate) + '&assignee=' + assignees[:-1],
         headers=constants.header
     )
-    with open("temp.json", "w") as f:
-        f.write(json.dumps(request.json()))
     return request.json()['data']
 
 

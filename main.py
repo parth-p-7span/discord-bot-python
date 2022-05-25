@@ -146,7 +146,7 @@ async def sendEverydayReportToHR():
     allTasks = clickup.getTasksForAllMembers(sTimestamp, eTimestamp)
     file_path = func.generateReport(allTasks, formated_date)
 
-    user = client.get_user(927786642721341490)
+    user = client.get_user(constants.CHARMI_DISCORD)
     await user.send(f"Here's daily report of {formated_date}", file=discord.File(file_path))
 
 
@@ -204,10 +204,13 @@ async def sendMonthEndMessage():
         await user.send(messages['monthend_message'])
 
 
-async def createThread(date):
+async def createThread(date, channel_id, is_day):
     print("===> CREATE THREAD")
-    channel = client.get_channel(constants.CELEBRATION_CHANNEL)
-    name = date
+    channel = client.get_channel(channel_id)
+    if is_day:
+        name = "☀ "+date
+    else:
+        name = "🌑 "+date
     thread = await channel.create_thread(name=name, type=discord.ChannelType.public_thread)
     await thread.send("Please enter updates of " + date)
 
@@ -239,24 +242,31 @@ async def backgroundJob():
 
         # create morning thread
         if now.hour == constants.MORNING_THREAD_TIME[0] and now.minute == constants.MORNING_THREAD_TIME[1]:
-            date = now.strftime('%d-%m-%Y')
-            await createThread(date)
+            date = now.strftime('%d.%m.%Y')
+            await createThread(date, constants.LARAVEL_CHANNEL, False)
+            await createThread(date, constants.JAVA_CHANNEL, False)
+            await createThread(date, constants.DESIGN_CHANNEL, False)
+            await createThread(date, constants.CMS_CHANNEL, False)
 
         # create evening thread
         if now.hour == constants.EVENING_THREAD_TIME[0] and now.minute == constants.EVENING_THREAD_TIME[1]:
-            date = now.strftime('%d-%m-%Y')
-            await createThread(date)
+            date = now.strftime('%d.%m.%Y')
+            await createThread(date, constants.LARAVEL_CHANNEL, True)
+            await createThread(date, constants.JAVA_CHANNEL, True)
+            await createThread(date, constants.DESIGN_CHANNEL, True)
+            await createThread(date, constants.CMS_CHANNEL, True)
 
         await asyncio.sleep(60)
 
 
 @client.event
 async def on_member_join(member):
-    print(member.name)
     await member.create_dm()
     await member.dm_channel.send(
-        f"Hi {member.name}, welcome to 7Span's Discord server, enter `\\help` command for more information."
+        f"Hi {member.name},\nwelcome to 7Span's Discord server, enter `\\help` command for more information."
     )
+    user = client.get_user(constants.HARSH_DISCORD)
+    await user.send(f"{member.mention} joined 7Span's Discord server.")
 
 
 if __name__ == "__main__":

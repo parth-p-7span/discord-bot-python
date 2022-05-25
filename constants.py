@@ -10,7 +10,7 @@ listUrl = "https://api.clickup.com/api/v2/list/163200171/task"
 # ClickUp Creds
 k_token = "pk_615209_4GJNT43WK8ERWDKJPRLT8C4MD8VAFLYP"
 
-# custom field ids
+# custom field ids of clickUp response
 discord_id_field = '96596428-cd3d-4402-9c7a-d287369f77b7'
 clickup_id_field = '3486dc0d-e5e7-4fc7-93d5-ace1c5be7c8c'
 
@@ -22,15 +22,25 @@ STATUS_OK = 200
 STATUS_NO_CONTENT = 404
 STATUS_BAD_REQUEST = 400
 
-# auto message timing in (hours, minutes)
+# auto message timing in (hours, minutes) - 24 hours format
 MORNING_TIME = (11, 0)
 EVENING_TIME = (19, 0)
 REPORTING_TIME = (11, 30)
 CELEBRATE_TIME = (6, 0)
-MORNING_THREAD_TIME = (10, 0)
+MORNING_THREAD_TIME = (10, 30)
 EVENING_THREAD_TIME = (19, 0)
 
 
 # discord channel ids
 # CELEBRATION_CHANNEL = 977165952397492264      # testing server
 CELEBRATION_CHANNEL = 715898326116991030        # 7Span server
+LARAVEL_CHANNEL = 935448182740095026
+JAVA_CHANNEL = 876743244933910529
+DESIGN_CHANNEL = 788000822000746546
+CMS_CHANNEL = 875689186433302528
+
+
+# discord Ids
+HARSH_DISCORD = 706868039651426387
+PARTH_DISCORD = 927786642721341490
+CHARMI_DISCORD = 948086166442344488
