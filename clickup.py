@@ -115,6 +115,8 @@ def register(email, discordId):
         return constants.STATUS_NO_CONTENT
     cResponse = insertClickUpId(taskId, clickUpId)
     dResponse = insertDiscordId(taskId, discordId)
+    print(cResponse.json())
+    print(dResponse.json())
     if cResponse.status_code != constants.STATUS_OK or dResponse.status_code != constants.STATUS_OK:
         return constants.STATUS_BAD_REQUEST
     return constants.STATUS_OK
@@ -134,8 +136,8 @@ def createJson():
         except:
             email = ''
         try:
-            clickUpId = task['custom_fields'][17]['value']
-            discordId = task['custom_fields'][18]['value']
+            clickUpId = task['custom_fields'][16]['value']
+            discordId = task['custom_fields'][17]['value']
         except:
             clickUpId = ''
             discordId = ''
