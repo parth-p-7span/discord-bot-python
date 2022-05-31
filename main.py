@@ -3,6 +3,7 @@ import json
 
 from discord.ext import commands, tasks
 from discord.utils import get
+from discord.ext import commands, tasks
 import discord
 from datetime import datetime, timedelta, time
 import time
@@ -20,7 +21,8 @@ intents = discord.Intents.default()
 intents.members = True
 intents.messages = True
 intents.message_content = True
-client = commands.Bot(command_prefix='/', help_command=None, intents=intents)
+# client = commands.Bot(command_prefix='/', help_command=None, intents=intents)
+client = commands.AutoShardedBot(command_prefix='/', help_command=None, intents=intents)
 
 with open('messages.json', 'r') as f:
     messages = json.load(f)
@@ -82,27 +84,24 @@ async def eod(ctx, date=''):
         end_of_day = datetime(dt.year, dt.month, dt.day, 23, 59, 59)
         sTimestamp = str(round(time.mktime(start_of_day.timetuple())) * 1000)
         eTimestamp = str(round(time.mktime(end_of_day.timetuple())) * 1000)
+        tasks = clickup.getTasks(sTimestamp, eTimestamp, discordId)
+        func.createImage(tasks)
+        if len(tasks) > 1:
+            # string = tt.to_string(
+            #     tasks,
+            #     style=tt.styles.rounded_thick,
+            #     header=["Task Name", "Hours", "Start", "End"],
+            #     padding=(0, 3),
+            #     alignment="lccc"
+            # )
+            # string = "`" + string + "`"
+            file_path = "temp/test.png"
+            await ctx.send(file=discord.File(file_path))
 
-        try:
-            tasks = clickup.getTasks(sTimestamp, eTimestamp, discordId)
-
-            if len(tasks) > 1:
-                string = tt.to_string(
-                    tasks,
-                    style=tt.styles.rounded_thick,
-                    header=["Task Name", "Hours", "Start", "End"],
-                    padding=(0, 3),
-                    alignment="lccc"
-                )
-                string = "`" + string + "`"
-            else:
-                string = messages['msg_no_log_hours']
+        else:
+            string = messages['msg_no_log_hours']
             await ctx.send(string)
-        except TypeError:
-            await ctx.send(messages['register_first'] + "`" + messages['command_1'] + "`")
-        except Exception as e:
-            print(type(e))
-            await ctx.send("Something went wrong!")
+
     else:
         await ctx.send(f'Please send personal message to <@{constants.BOT_DISCORD}> for this command to execute.')
 
@@ -244,9 +243,9 @@ async def backgroundJob():
         if now.hour == constants.CELEBRATE_TIME[0] and now.minute == constants.CELEBRATE_TIME[1]:
             await wishDay()
 
-        # send month end clickup warning message
-        if now.day == monthend or now.day == monthend - 1:
-            await sendMonthEndMessage()
+        # send month-end clickup warning message
+        # if now.day == monthend or now.day == monthend - 1:
+        #     await sendMonthEndMessage()
 
         # create morning thread
         if now.hour == constants.MORNING_THREAD_TIME[0] and now.minute == constants.MORNING_THREAD_TIME[1]:
@@ -279,3 +278,6 @@ async def on_member_join(member):
 
 if __name__ == "__main__":
     client.run(constants.TOKEN)
+
+
+print("testing----")
