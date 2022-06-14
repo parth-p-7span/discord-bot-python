@@ -4,6 +4,10 @@ import constants
 import format_datetime
 import func
 from datetime import datetime
+import pytz
+
+
+tz_IN = pytz.timezone('Asia/Kolkata')
 
 
 # def reloadUserTasksJson():
@@ -189,7 +193,7 @@ def getTasksForAllMembers(startDate, endDate):
 
 
 def checkForDay():
-    today = datetime.now().strftime('%m-%d')
+    today = datetime.now(tz_IN).strftime('%m-%d')
     # today = datetime(2022,4,8).strftime('%m-%d')
     birthday_guys = []
     work_anniversary_guys = []

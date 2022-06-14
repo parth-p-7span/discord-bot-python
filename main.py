@@ -8,6 +8,7 @@ import discord
 from datetime import datetime, timedelta, time
 import time
 import calendar
+import pytz
 
 import io
 import aiohttp
@@ -17,6 +18,7 @@ import constants
 import clickup
 import func
 
+tz_IN = pytz.timezone('Asia/Kolkata')
 intents = discord.Intents.default()
 intents.members = True
 intents.messages = True
@@ -71,7 +73,7 @@ async def clearCache(ctx):
 async def eod(ctx, date=''):
     if ctx.channel.type == discord.ChannelType.private:
         if date == '':
-            dt = datetime.now()
+            dt = datetime.now(tz_IN)
         else:
             try:
                 dt = datetime.strptime(date, '%Y-%m-%d')
@@ -226,7 +228,7 @@ async def createThread(date, channel_id, is_morning):
 
 async def backgroundJob():
     while True:
-        now = datetime.now()
+        now = datetime.now(tz_IN)
         monthend = calendar.monthrange(now.year, now.month)[1]
 
         # send morning message to those whose yesterday clickup hours is > 10
