@@ -85,18 +85,20 @@ async def eod(ctx, date=''):
         sTimestamp = str(round(time.mktime(start_of_day.timetuple())) * 1000)
         eTimestamp = str(round(time.mktime(end_of_day.timetuple())) * 1000)
         tasks = clickup.getTasks(sTimestamp, eTimestamp, discordId)
-        func.createImage(tasks)
+        # func.createImage(tasks)
         if len(tasks) > 1:
-            # string = tt.to_string(
-            #     tasks,
-            #     style=tt.styles.rounded_thick,
-            #     header=["Task Name", "Hours", "Start", "End"],
-            #     padding=(0, 3),
-            #     alignment="lccc"
-            # )
-            # string = "`" + string + "`"
-            file_path = "temp/test.png"
-            await ctx.send(file=discord.File(file_path))
+            string = tt.to_string(
+                tasks,
+                style=tt.styles.rounded_thick,
+                header=["Task Name", "Hours", "Start", "End"],
+                padding=(0, 3),
+                alignment="lccc"
+            )
+            string = "`" + string + "`"
+            # file_path = "temp/test.png"
+            # await ctx.send(file=discord.File(file_path))
+            await ctx.send(string)
+
 
         else:
             string = messages['msg_no_log_hours']
@@ -113,7 +115,7 @@ async def help(ctx):
         [messages['command_2'], messages['command_2_msg']],
         [messages['command_3'], messages['command_3_msg']],
     ]
-    message = tt.to_string(
+    message = tt.to_string( 
         helps,
         style=tt.styles.rounded_thick,
         header=["Command", "Description"],
@@ -244,8 +246,8 @@ async def backgroundJob():
             await wishDay()
 
         # send month-end clickup warning message
-        # if now.day == monthend or now.day == monthend - 1:
-        #     await sendMonthEndMessage()
+        if now.day == monthend or now.day == monthend - 1:
+            await sendMonthEndMessage()
 
         # create morning thread
         if now.hour == constants.MORNING_THREAD_TIME[0] and now.minute == constants.MORNING_THREAD_TIME[1]:
@@ -259,9 +261,9 @@ async def backgroundJob():
         if now.hour == constants.EVENING_THREAD_TIME[0] and now.minute == constants.EVENING_THREAD_TIME[1]:
             date = now.strftime('%d.%m.%Y')
             await createThread(date, constants.BOT_TEST_CHANNEL, True)
-            # await createThread(date, constants.JAVA_CHANNEL, False)
-            # await createThread(date, constants.DESIGN_CHANNEL, False)
-            # await createThread(date, constants.CMS_CHANNEL, False)
+            await createThread(date, constants.JAVA_CHANNEL, False)
+            await createThread(date, constants.DESIGN_CHANNEL, False)
+            await createThread(date, constants.CMS_CHANNEL, False)
 
         await asyncio.sleep(60)
 
