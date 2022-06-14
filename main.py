@@ -19,12 +19,13 @@ import clickup
 import func
 
 tz_IN = pytz.timezone('Asia/Kolkata')
+
 intents = discord.Intents.default()
 intents.members = True
 intents.messages = True
 intents.message_content = True
-# client = commands.Bot(command_prefix='/', help_command=None, intents=intents)
-client = commands.AutoShardedBot(command_prefix='/', help_command=None, intents=intents)
+client = commands.Bot(command_prefix='/', help_command=None, intents=intents)
+# client = commands.AutoShardedBot(command_prefix='/', help_command=None, intents=intents)
 
 with open('messages.json', 'r') as f:
     messages = json.load(f)
@@ -82,8 +83,8 @@ async def eod(ctx, date=''):
 
         discordId = str(ctx.message.author.id)
 
-        start_of_day = datetime(dt.year, dt.month, dt.day, 0, 0, 0)
-        end_of_day = datetime(dt.year, dt.month, dt.day, 23, 59, 59)
+        start_of_day = datetime(dt.year, dt.month, dt.day, 0, 0, 0, tzinfo=tz_IN)
+        end_of_day = datetime(dt.year, dt.month, dt.day, 23, 59, 59, tzinfo=tz_IN)
         sTimestamp = str(round(time.mktime(start_of_day.timetuple())) * 1000)
         eTimestamp = str(round(time.mktime(end_of_day.timetuple())) * 1000)
         tasks = clickup.getTasks(sTimestamp, eTimestamp, discordId)

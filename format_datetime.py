@@ -1,15 +1,19 @@
 from datetime import datetime
+import pytz
+
+
+tz_IN = pytz.timezone('Asia/Kolkata')
 
 
 def get_time(timestamp):
     timestamp = int(timestamp)//1000
-    dt = datetime.fromtimestamp(timestamp).strftime('%I:%M %p')
+    dt = datetime.fromtimestamp(timestamp, tz=tz_IN).strftime('%I:%M %p')
     return dt
 
 
 def get_date(timestamp):
     timestamp = int(timestamp)//1000
-    dt = datetime.fromtimestamp(timestamp).strftime('%m-%d')
+    dt = datetime.fromtimestamp(timestamp, tz=tz_IN).strftime('%m-%d')
     return dt
 
 
