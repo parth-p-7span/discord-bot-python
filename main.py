@@ -174,7 +174,7 @@ async def sendMorningMessage():
     reducedData, hours = func.reduceData(sortedData, userIds, getHours=True)
 
     for record in hours:
-        if record[1] >= 7:
+        if record[1] >= 10:
             discordId = func.getDiscordId(record[0])
             user = client.get_user(int(discordId))
             await user.send(messages['morning_clickup_msg'])
