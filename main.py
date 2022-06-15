@@ -263,7 +263,7 @@ async def backgroundJob():
         # create evening thread
         if now.hour == constants.EVENING_THREAD_TIME[0] and now.minute == constants.EVENING_THREAD_TIME[1]:
             date = now.strftime('%d.%m.%Y')
-            await createThread(date, constants.BOT_TEST_CHANNEL, True)
+            await createThread(date, constants.LARAVEL_CHANNEL, True)
             await createThread(date, constants.JAVA_CHANNEL, False)
             await createThread(date, constants.DESIGN_CHANNEL, False)
             await createThread(date, constants.CMS_CHANNEL, False)
