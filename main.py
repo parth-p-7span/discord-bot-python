@@ -233,15 +233,15 @@ async def backgroundJob():
         monthend = calendar.monthrange(now.year, now.month)[1]
 
         # send morning message to those whose yesterday clickup hours is > 10
-        if now.hour == constants.MORNING_TIME[0] and now.minute == constants.MORNING_TIME[1]:
+        if now.hour == constants.MORNING_TIME[0] and now.minute == constants.MORNING_TIME[1] and now.weekday() <= 4:
             await sendMorningMessage()
 
         # send evening clickup message to all everyday.
-        if now.hour == constants.EVENING_TIME[0] and now.minute == constants.EVENING_TIME[1]:
+        if now.hour == constants.EVENING_TIME[0] and now.minute == constants.EVENING_TIME[1] and now.weekday() <= 4:
             await sendEveningMessage()
 
         # send everyday report to HR
-        if now.hour == constants.REPORTING_TIME[0] and now.minute == constants.REPORTING_TIME[1]:
+        if now.hour == constants.REPORTING_TIME[0] and now.minute == constants.REPORTING_TIME[1] and now.weekday() <= 4:
             await sendEverydayReportToHR()
 
         # send wishing message in celebration channel
@@ -253,7 +253,7 @@ async def backgroundJob():
             await sendMonthEndMessage()
 
         # create morning thread
-        if now.hour == constants.MORNING_THREAD_TIME[0] and now.minute == constants.MORNING_THREAD_TIME[1]:
+        if now.hour == constants.MORNING_THREAD_TIME[0] and now.minute == constants.MORNING_THREAD_TIME[1] and now.weekday() <= 4:
             date = now.strftime('%d.%m.%Y')
             await createThread(date, constants.LARAVEL_CHANNEL, True)
             await createThread(date, constants.JAVA_CHANNEL, True)
@@ -261,14 +261,12 @@ async def backgroundJob():
             await createThread(date, constants.CMS_CHANNEL, True)
 
         # create evening thread
-        if now.hour == constants.EVENING_THREAD_TIME[0] and now.minute == constants.EVENING_THREAD_TIME[1]:
+        if now.hour == constants.EVENING_THREAD_TIME[0] and now.minute == constants.EVENING_THREAD_TIME[1] and now.weekday() <= 4:
             date = now.strftime('%d.%m.%Y')
-            await createThread(date, constants.LARAVEL_CHANNEL, True)
+            await createThread(date, constants.LARAVEL_CHANNEL, False)
             await createThread(date, constants.JAVA_CHANNEL, False)
             await createThread(date, constants.DESIGN_CHANNEL, False)
             await createThread(date, constants.CMS_CHANNEL, False)
-
-        await asyncio.sleep(60)
 
 
 @client.event
