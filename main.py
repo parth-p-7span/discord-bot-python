@@ -134,6 +134,14 @@ async def refresh(ctx):
     clickup.createJson()
     await ctx.send(messages['data_refreshed'])
 
+@client.command()
+async def purge(ctx, count):
+    discordId = ctx.message.author.id
+    if discordId == constants.HARSH_DISCORD:
+        print("===> PURGING MESSAGES")
+        await ctx.channel.purge(limit=count)
+    else:
+        print("===> ", discordId, " PURGE ACCESS DENIED")
 
 async def sendEveningMessage():
     print("===> SEND EVENING MESSAGE")
