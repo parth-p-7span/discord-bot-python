@@ -270,6 +270,7 @@ async def backgroundJob():
             await createThread(date, constants.DESIGN_CHANNEL, False)
             await createThread(date, constants.CMS_CHANNEL, False)
 
+        await asyncio.sleep(60)
 
 @client.event
 async def on_member_join(member):
