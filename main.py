@@ -142,6 +142,7 @@ async def sendEveningMessage():
     for uid in ids:
         user = client.get_user(uid)
         await user.send(messages['evening_clickup_msg'])
+        await asyncio.sleep(1)
 
 
 async def sendEverydayReportToHR():
