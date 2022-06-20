@@ -179,6 +179,7 @@ async def sendMorningMessage():
             discordId = func.getDiscordId(record[0])
             user = client.get_user(int(discordId))
             await user.send(messages['morning_clickup_msg'])
+            await asyncio.sleep(1)
 
 
 async def wishDay():
