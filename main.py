@@ -94,7 +94,7 @@ async def eod(ctx, date=''):
                 tasks,
                 style=tt.styles.rounded_thick,
                 header=["Task Name", "Hours", "Start", "End"],
-                padding=(0, 3),
+                padding=(0, 1),
                 alignment="lccc"
             )
             string = "`" + string + "`"
