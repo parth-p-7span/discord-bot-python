@@ -90,18 +90,38 @@ async def eod(ctx, date=''):
         tasks = clickup.getTasks(sTimestamp, eTimestamp, discordId)
         # func.createImage(tasks)
         if len(tasks) > 1:
-            string = tt.to_string(
-                tasks,
-                style=tt.styles.rounded_thick,
-                header=["Task Name", "Hours", "Start", "End"],
-                padding=(0, 1),
-                alignment="lccc"
-            )
-            string = "`" + string + "`"
-            # file_path = "temp/test.png"
-            # await ctx.send(file=discord.File(file_path))
-            await ctx.send(string)
+            print(len(tasks))
+            if len(tasks) > 5:
+                string1 = tt.to_string(
+                    tasks[:5],
+                    style=tt.styles.rounded_thick,
+                    header=["Task Name", "Hours", "Start", "End"],
+                    padding=(0, 1),
+                    alignment="lccc"
+                )
+                string1 = "`" + string1 + "`"
 
+                string2 = tt.to_string(
+                    tasks[5:],
+                    style=tt.styles.rounded_thick,
+                    padding=(0, 1),
+                    alignment="lccc"
+                )
+                string2 = "`" + string2 + "`"
+
+                await ctx.send(string1)
+                await ctx.send(string2)
+
+            else:
+                string = tt.to_string(
+                    tasks,
+                    style=tt.styles.rounded_thick,
+                    header=["Task Name", "Hours", "Start", "End"],
+                    padding=(0, 1),
+                    alignment="lccc"
+                )
+                string = "`" + string + "`"
+                await ctx.send(string)
 
         else:
             string = messages['msg_no_log_hours']
@@ -118,7 +138,7 @@ async def help(ctx):
         [messages['command_2'], messages['command_2_msg']],
         [messages['command_3'], messages['command_3_msg']],
     ]
-    message = tt.to_string( 
+    message = tt.to_string(
         helps,
         style=tt.styles.rounded_thick,
         header=["Command", "Description"],
@@ -134,6 +154,7 @@ async def refresh(ctx):
     clickup.createJson()
     await ctx.send(messages['data_refreshed'])
 
+
 @client.command()
 async def purge(ctx, count):
     discordId = ctx.message.author.id
@@ -142,6 +163,7 @@ async def purge(ctx, count):
         await ctx.channel.purge(limit=count)
     else:
         print("===> ", discordId, " PURGE ACCESS DENIED")
+
 
 async def sendEveningMessage():
     print("===> SEND EVENING MESSAGE")
@@ -263,7 +285,8 @@ async def backgroundJob():
             await sendMonthEndMessage()
 
         # create morning thread
-        if now.hour == constants.MORNING_THREAD_TIME[0] and now.minute == constants.MORNING_THREAD_TIME[1] and now.weekday() <= 4:
+        if now.hour == constants.MORNING_THREAD_TIME[0] and now.minute == constants.MORNING_THREAD_TIME[
+            1] and now.weekday() <= 4:
             date = now.strftime('%d.%m.%Y')
             await createThread(date, constants.LARAVEL_CHANNEL, True)
             await createThread(date, constants.JAVA_CHANNEL, True)
@@ -271,7 +294,8 @@ async def backgroundJob():
             await createThread(date, constants.CMS_CHANNEL, True)
 
         # create evening thread
-        if now.hour == constants.EVENING_THREAD_TIME[0] and now.minute == constants.EVENING_THREAD_TIME[1] and now.weekday() <= 4:
+        if now.hour == constants.EVENING_THREAD_TIME[0] and now.minute == constants.EVENING_THREAD_TIME[
+            1] and now.weekday() <= 4:
             date = now.strftime('%d.%m.%Y')
             await createThread(date, constants.LARAVEL_CHANNEL, False)
             await createThread(date, constants.JAVA_CHANNEL, False)
@@ -279,6 +303,7 @@ async def backgroundJob():
             await createThread(date, constants.CMS_CHANNEL, False)
 
         await asyncio.sleep(60)
+
 
 @client.event
 async def on_member_join(member):
@@ -292,6 +317,5 @@ async def on_member_join(member):
 
 if __name__ == "__main__":
     client.run(constants.TOKEN)
-
 
 print("testing----")

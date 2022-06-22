@@ -1,6 +1,6 @@
 # Discord Bot Token
-# TOKEN = 'OTczMjA0NzA5NzczMDQxNzE1.GFnFi_.mbL54DFleFR4p6FsuHK2zU7TR0xVYYhqKACPQQ'  # FirstBot
-TOKEN = 'OTc2MDI3NTEyOTE0MTkwMzQ2.GJRx8J.pt8410Jje3BtZSLpgQ6j2fjeB6_wbH2NMCYuDs'  # Sevenβ
+TOKEN = 'OTczMjA0NzA5NzczMDQxNzE1.GFnFi_.mbL54DFleFR4p6FsuHK2zU7TR0xVYYhqKACPQQ'  # FirstBot
+# TOKEN = 'OTc2MDI3NTEyOTE0MTkwMzQ2.GJRx8J.pt8410Jje3BtZSLpgQ6j2fjeB6_wbH2NMCYuDs'  # Sevenβ
 
 # APIs
 getTeam = "https://api.clickup.com/api/v2/team"
