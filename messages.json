@@ -14,5 +14,6 @@
   "msg_no_log_hours": "you haven't logged any of your tasks for today. please log those tasks before leaving. thank you..",
   "monthend_message": "Gentle Reminder\nKindly check/revise your ClickUp hours for this month...",
   "register_first": "Please register first using",
-  "data_refreshed": "Users data has been refreshed!"
+  "data_refreshed": "Users data has been refreshed!",
+  "java_daily_updates_msg": "Please share your status in below format\n1. What did you work on today/yesterday?\n2. Are you blocked on anything?\n3. What are your goals for today/tomorrow?"
 }

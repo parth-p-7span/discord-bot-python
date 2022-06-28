@@ -248,7 +248,7 @@ async def sendMonthEndMessage():
         await user.send(messages['monthend_message'])
 
 
-async def createThread(date, channel_id, is_morning):
+async def createThread(date, channel_id, is_morning, is_java_update=False):
     print("===> CREATE THREAD")
     channel = client.get_channel(channel_id)
     if is_morning:
@@ -256,7 +256,10 @@ async def createThread(date, channel_id, is_morning):
     else:
         name = "🌚 " + date
     thread = await channel.create_thread(name=name, type=discord.ChannelType.public_thread)
-    await thread.send("Please enter updates of " + date)
+    if is_java_update:
+        await thread.send(messages['java_daily_updates_msg'])
+    else:
+        await thread.send("Please enter updates of " + date)
 
 
 async def backgroundJob():
@@ -292,6 +295,7 @@ async def backgroundJob():
             await createThread(date, constants.JAVA_CHANNEL, True)
             await createThread(date, constants.DESIGN_CHANNEL, True)
             await createThread(date, constants.CMS_CHANNEL, True)
+            await createThread(date, constants.JAVA_UPDATES_CHANNEL, True, is_java_update=True)
 
         # create evening thread
         if now.hour == constants.EVENING_THREAD_TIME[0] and now.minute == constants.EVENING_THREAD_TIME[
@@ -301,6 +305,7 @@ async def backgroundJob():
             await createThread(date, constants.JAVA_CHANNEL, False)
             await createThread(date, constants.DESIGN_CHANNEL, False)
             await createThread(date, constants.CMS_CHANNEL, False)
+            await createThread(date, constants.JAVA_UPDATES_CHANNEL, False, is_java_update=True)
 
         await asyncio.sleep(60)
 
