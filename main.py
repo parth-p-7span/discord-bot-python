@@ -248,8 +248,7 @@ async def sendMonthEndMessage():
         await user.send(messages['monthend_message'])
 
 
-async def createThread(date, channel_id, is_morning, is_java_update=False):
-    print("===> CREATE THREAD")
+async def createThread(date, channel_id, is_morning, channel_name, is_java_update=False):
     channel = client.get_channel(channel_id)
     if is_morning:
         name = "🌞 " + date
@@ -260,6 +259,8 @@ async def createThread(date, channel_id, is_morning, is_java_update=False):
         await thread.send(messages['java_daily_updates_msg'])
     else:
         await thread.send("Please enter updates of " + date)
+    print(f"===> {channel_name} THREAD CREATED")
+
 
 
 async def backgroundJob():
@@ -284,28 +285,28 @@ async def backgroundJob():
             await wishDay()
 
         # send month-end clickup warning message
-        if now.day == monthend or now.day == monthend - 1:
+        if now.day == monthend or now.day == monthend - 1 and now.hour == constants.MORNING_THREAD_TIME[0] and now.minute == constants.MORNING_THREAD_TIME[1]:
             await sendMonthEndMessage()
 
         # create morning thread
         if now.hour == constants.MORNING_THREAD_TIME[0] and now.minute == constants.MORNING_THREAD_TIME[
             1] and now.weekday() <= 4:
             date = now.strftime('%d.%m.%Y')
-            await createThread(date, constants.LARAVEL_CHANNEL, True)
-            await createThread(date, constants.JAVA_CHANNEL, True)
-            await createThread(date, constants.DESIGN_CHANNEL, True)
-            await createThread(date, constants.CMS_CHANNEL, True)
-            await createThread(date, constants.JAVA_UPDATES_CHANNEL, True, is_java_update=True)
+            await createThread(date, constants.LARAVEL_CHANNEL, True, "LARAVEL")
+            await createThread(date, constants.JAVA_CHANNEL, True, "JAVA")
+            await createThread(date, constants.DESIGN_CHANNEL, True, "DESIGN")
+            await createThread(date, constants.CMS_CHANNEL, True, "CMS")
+            await createThread(date, constants.JAVA_UPDATES_CHANNEL, True, "JAVA_UPDATES", is_java_update=True)
 
         # create evening thread
         if now.hour == constants.EVENING_THREAD_TIME[0] and now.minute == constants.EVENING_THREAD_TIME[
             1] and now.weekday() <= 4:
             date = now.strftime('%d.%m.%Y')
-            await createThread(date, constants.LARAVEL_CHANNEL, False)
-            await createThread(date, constants.JAVA_CHANNEL, False)
-            await createThread(date, constants.DESIGN_CHANNEL, False)
-            await createThread(date, constants.CMS_CHANNEL, False)
-            await createThread(date, constants.JAVA_UPDATES_CHANNEL, False, is_java_update=True)
+            await createThread(date, constants.LARAVEL_CHANNEL, False, "LARAVEL")
+            await createThread(date, constants.JAVA_CHANNEL, False, "JAVA")
+            await createThread(date, constants.DESIGN_CHANNEL, False, "DESIGN")
+            await createThread(date, constants.CMS_CHANNEL, False, "CMS")
+            await createThread(date, constants.JAVA_UPDATES_CHANNEL, False, "JAVA_UPDATES", is_java_update=True)
 
         await asyncio.sleep(60)
 

@@ -1,5 +1,5 @@
 # Discord Bot Token
-# TOKEN = 'OTczMjA0NzA5NzczMDQxNzE1.GFnFi_.mbL54DFleFR4p6FsuHK2zU7TR0xVYYhqKACPQQ'  # FirstBot
+# TOKEN = 'OTczMjA0NzA5NzczMDQxNzE1.Gy6elc.WDCIhMqAAN6erEaY9fbeHFROtrvtt3yC7Tk0nI'  # FirstBot
 TOKEN = 'OTc2MDI3NTEyOTE0MTkwMzQ2.GJRx8J.pt8410Jje3BtZSLpgQ6j2fjeB6_wbH2NMCYuDs'  # Sevenβ
 
 # APIs
