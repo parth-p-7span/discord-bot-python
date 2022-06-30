@@ -115,7 +115,7 @@ async def eod(ctx, date=''):
             else:
                 string = tt.to_string(
                     tasks,
-                    style=tt.styles.rounded_thick,
+                    style=tt.styles.rounded_thick   ,
                     header=["Task Name", "Hours", "Start", "End"],
                     padding=(0, 1),
                     alignment="lccc"
@@ -296,6 +296,9 @@ async def backgroundJob():
             await createThread(date, constants.DESIGN_CHANNEL, True, "DESIGN")
             await createThread(date, constants.CMS_CHANNEL, True, "CMS")
             await createThread(date, constants.JAVA_UPDATES_CHANNEL, True, "JAVA_UPDATES", is_java_update=True)
+            await createThread(date, constants.JAVASCRIPT_CHANNEL, True, "JAVASCRIPT_CHANNEL")
+            await createThread(date, constants.SALES_CHANNEL, True, "SALES_CHANNEL")
+            await createThread(date, constants.MOBILE_CHANNEL, True, "MOBILE_CHANNEL")
 
         # create evening thread
         if now.hour == constants.EVENING_THREAD_TIME[0] and now.minute == constants.EVENING_THREAD_TIME[
@@ -305,6 +308,9 @@ async def backgroundJob():
             await createThread(date, constants.DESIGN_CHANNEL, False, "DESIGN")
             await createThread(date, constants.CMS_CHANNEL, False, "CMS")
             await createThread(date, constants.JAVA_UPDATES_CHANNEL, False, "JAVA_UPDATES", is_java_update=True)
+            await createThread(date, constants.JAVASCRIPT_CHANNEL, False, "JAVASCRIPT_CHANNEL")
+            await createThread(date, constants.SALES_CHANNEL, False, "SALES_CHANNEL")
+            await createThread(date, constants.MOBILE_CHANNEL, False, "MOBILE_CHANNEL")
 
         await asyncio.sleep(60)
 
