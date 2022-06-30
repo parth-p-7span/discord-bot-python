@@ -285,7 +285,7 @@ async def backgroundJob():
             await wishDay()
 
         # send month-end clickup warning message
-        if now.day == monthend or now.day == monthend - 1 and now.hour == constants.MORNING_THREAD_TIME[0] and now.minute == constants.MORNING_THREAD_TIME[1]:
+        if (now.day == monthend or now.day == monthend - 1) and now.hour == constants.MORNING_THREAD_TIME[0] and now.minute == constants.MORNING_THREAD_TIME[1]:
             await sendMonthEndMessage()
 
         # create morning thread
