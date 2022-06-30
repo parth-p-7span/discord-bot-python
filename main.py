@@ -293,7 +293,6 @@ async def backgroundJob():
             1] and now.weekday() <= 4:
             date = now.strftime('%d.%m.%Y')
             await createThread(date, constants.LARAVEL_CHANNEL, True, "LARAVEL")
-            await createThread(date, constants.JAVA_CHANNEL, True, "JAVA")
             await createThread(date, constants.DESIGN_CHANNEL, True, "DESIGN")
             await createThread(date, constants.CMS_CHANNEL, True, "CMS")
             await createThread(date, constants.JAVA_UPDATES_CHANNEL, True, "JAVA_UPDATES", is_java_update=True)
@@ -303,7 +302,6 @@ async def backgroundJob():
             1] and now.weekday() <= 4:
             date = now.strftime('%d.%m.%Y')
             await createThread(date, constants.LARAVEL_CHANNEL, False, "LARAVEL")
-            await createThread(date, constants.JAVA_CHANNEL, False, "JAVA")
             await createThread(date, constants.DESIGN_CHANNEL, False, "DESIGN")
             await createThread(date, constants.CMS_CHANNEL, False, "CMS")
             await createThread(date, constants.JAVA_UPDATES_CHANNEL, False, "JAVA_UPDATES", is_java_update=True)
