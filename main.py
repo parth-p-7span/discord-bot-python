@@ -1,17 +1,18 @@
 import asyncio
 import json
+import os
 
-from discord.ext import commands, tasks
-from discord.utils import get
-from discord.ext import commands, tasks
+from discord.ext import commands
 import discord
 from datetime import datetime, timedelta, time
 import time
 import calendar
 import pytz
+import requests
+from bs4 import BeautifulSoup
+import random
+import urllib.request
 
-import io
-import aiohttp
 import termtables as tt
 
 import constants
@@ -25,7 +26,6 @@ intents.members = True
 intents.messages = True
 intents.message_content = True
 client = commands.Bot(command_prefix='/', help_command=None, intents=intents)
-# client = commands.AutoShardedBot(command_prefix='/', help_command=None, intents=intents)
 
 with open('messages.json', 'r') as f:
     messages = json.load(f)
@@ -33,27 +33,33 @@ with open('messages.json', 'r') as f:
 
 @client.event
 async def on_ready():
-    client.loop.create_task(backgroundJob())
+    client.loop.create_task(background_job())
     print(f'{client.user} has Awoken!')
 
 
 @client.command(name="test")
 async def test(ctx):
+    if ctx.channel.type != discord.ChannelType.private:
+        await ctx.send('DM kar ne bhai')
+        return
     print('-------', ctx.channel, '---', type(ctx.channel))
     await ctx.send(f'Tested!')
 
 
 @client.command()
 async def register(ctx, email):
+    if ctx.channel.type != discord.ChannelType.private:
+        await ctx.send('DM kar ne bhai')
+        return
     if email != '':
-        discordId = str(ctx.message.author.id)
-        result = clickup.register(email, discordId)
+        discord_id = str(ctx.message.author.id)
+        result = clickup.register(email, discord_id)
         if result == constants.STATUS_NO_CONTENT:
             await ctx.send(messages['err_no_user_found'])
         elif result == constants.STATUS_BAD_REQUEST:
             await ctx.send(messages['err_while_entering_record'])
         elif result == constants.STATUS_OK:
-            clickup.createJson()
+            clickup.create_json()
             await ctx.send(messages['registered_successfully'])
         else:
             await ctx.send(messages['something_went_wrong'])
@@ -62,8 +68,11 @@ async def register(ctx, email):
 
 
 @client.command(aliases=['clear-cache'])
-async def clearCache(ctx):
-    result = func.clearCache()
+async def clear_cache(ctx):
+    if ctx.channel.type != discord.ChannelType.private:
+        await ctx.send('DM kar ne bhai')
+        return
+    result = func.clear_cache()
     if result:
         await ctx.send('All daily report cache has been cleared!')
     else:
@@ -71,64 +80,95 @@ async def clearCache(ctx):
 
 
 @client.command()
+async def meme(ctx, tag="programming"):
+    response = requests.get(constants.meme_url + tag)
+    soup = BeautifulSoup(response.content, 'lxml')
+    divs = soup.find_all('div', class_='item-aux-container')
+    imgs = []
+    for div in divs:
+        img = div.find('img')['src']
+        if img.startswith('http') and img.endswith('jpeg'):
+            imgs.append(img)
+    meme = random.choice(imgs)
+    urllib.request.urlretrieve(meme, "meme.jpg")
+    await ctx.send(file=discord.File('meme.jpg'))
+    os.remove('meme.jpg')
+
+
+@client.command()
+async def fact(ctx):
+    try:
+        res = requests.get(constants.facts_url, headers={'X-Api-Key': constants.facts_api_key})
+        text = res.json()[0]['fact']
+        await ctx.send(text)
+    except Exception as e:
+        print(e)
+        await ctx.send('Approximately 7.5% of all office documents get lost')
+
+
+@client.command()
+async def compare(ctx):
+    await ctx.send(f'7Span ka ek hi Bot {client.user.mention}... {client.user.mention}...')
+
+
+@client.command()
 async def eod(ctx, date=''):
-    if ctx.channel.type == discord.ChannelType.private:
-        if date == '':
-            dt = datetime.now(tz_IN)
-        else:
-            try:
-                dt = datetime.strptime(date, '%Y-%m-%d')
-            except ValueError:
-                dt = datetime.strptime(date, '%d-%m-%Y')
+    if ctx.channel.type != discord.ChannelType.private:
+        await ctx.send('DM kar ne bhai')
+        return
+    if date == '':
+        dt = datetime.now(tz_IN)
+    else:
+        try:
+            dt = datetime.strptime(date, '%Y-%m-%d')
+        except ValueError:
+            dt = datetime.strptime(date, '%d-%m-%Y')
 
-        discordId = str(ctx.message.author.id)
+    discord_id = str(ctx.message.author.id)
 
-        start_of_day = datetime(dt.year, dt.month, dt.day, 0, 0, 0, tzinfo=tz_IN)
-        end_of_day = datetime(dt.year, dt.month, dt.day, 23, 59, 59, tzinfo=tz_IN)
-        sTimestamp = str(round(time.mktime(start_of_day.timetuple())) * 1000)
-        eTimestamp = str(round(time.mktime(end_of_day.timetuple())) * 1000)
-        tasks = clickup.getTasks(sTimestamp, eTimestamp, discordId)
-        # func.createImage(tasks)
-        if len(tasks) > 1:
-            print(len(tasks))
-            if len(tasks) > 5:
-                string1 = tt.to_string(
-                    tasks[:5],
-                    style=tt.styles.rounded_thick,
-                    header=["Task Name", "Hours", "Start", "End"],
-                    padding=(0, 1),
-                    alignment="lccc"
-                )
-                string1 = "`" + string1 + "`"
+    start_of_day = datetime(dt.year, dt.month, dt.day, 0, 0, 0, tzinfo=tz_IN)
+    end_of_day = datetime(dt.year, dt.month, dt.day, 23, 59, 59, tzinfo=tz_IN)
+    s_timestamp = str(round(time.mktime(start_of_day.timetuple())) * 1000)
+    e_timestamp = str(round(time.mktime(end_of_day.timetuple())) * 1000)
+    my_tasks = clickup.get_tasks(s_timestamp, e_timestamp, discord_id)
+    # func.createImage(my_tasks)
+    if len(my_tasks) > 1:
+        print(len(my_tasks))
+        if len(my_tasks) > 5:
+            string1 = tt.to_string(
+                my_tasks[:5],
+                style=tt.styles.rounded_thick,
+                header=["Task Name", "Hours", "Start", "End"],
+                padding=(0, 1),
+                alignment="lccc"
+            )
+            string1 = "`" + string1 + "`"
 
-                string2 = tt.to_string(
-                    tasks[5:],
-                    style=tt.styles.rounded_thick,
-                    padding=(0, 1),
-                    alignment="lccc"
-                )
-                string2 = "`" + string2 + "`"
+            string2 = tt.to_string(
+                my_tasks[5:],
+                style=tt.styles.rounded_thick,
+                padding=(0, 1),
+                alignment="lccc"
+            )
+            string2 = "`" + string2 + "`"
 
-                await ctx.send(string1)
-                await ctx.send(string2)
-
-            else:
-                string = tt.to_string(
-                    tasks,
-                    style=tt.styles.rounded_thick   ,
-                    header=["Task Name", "Hours", "Start", "End"],
-                    padding=(0, 1),
-                    alignment="lccc"
-                )
-                string = "`" + string + "`"
-                await ctx.send(string)
+            await ctx.send(string1)
+            await ctx.send(string2)
 
         else:
-            string = messages['msg_no_log_hours']
+            string = tt.to_string(
+                my_tasks,
+                style=tt.styles.rounded_thick,
+                header=["Task Name", "Hours", "Start", "End"],
+                padding=(0, 1),
+                alignment="lccc"
+            )
+            string = "`" + string + "`"
             await ctx.send(string)
 
     else:
-        await ctx.send(f'Please send personal message to <@{constants.BOT_DISCORD}> for this command to execute.')
+        string = messages['msg_no_log_hours']
+        await ctx.send(string)
 
 
 @client.command()
@@ -151,23 +191,23 @@ async def help(ctx):
 
 @client.command(aliases=['refresh-data'])
 async def refresh(ctx):
-    clickup.createJson()
+    clickup.create_json()
     await ctx.send(messages['data_refreshed'])
 
 
 @client.command()
 async def purge(ctx, count):
-    discordId = ctx.message.author.id
-    if discordId == constants.HARSH_DISCORD:
+    discord_id = ctx.message.author.id
+    if discord_id == constants.HARSH_DISCORD:
         print("===> PURGING MESSAGES")
         await ctx.channel.purge(limit=count)
     else:
-        print("===> ", discordId, " PURGE ACCESS DENIED")
+        print("===> ", discord_id, " PURGE ACCESS DENIED")
 
 
-async def sendEveningMessage():
+async def send_evening_message():
     print("===> SEND EVENING MESSAGE")
-    ids = func.getDiscordIds()
+    ids = func.get_discord_ids()
     # ids = [927786642721341490]
     for uid in ids:
         user = client.get_user(uid)
@@ -175,49 +215,49 @@ async def sendEveningMessage():
         await asyncio.sleep(1)
 
 
-async def sendEverydayReportToHR():
+async def send_everyday_report_to_hr():
     print("===> SEND REPORT TO HR")
     yesterday = datetime.today() - timedelta(1)
 
     start_of_day = datetime(yesterday.year, yesterday.month, yesterday.day, 0, 0, 0)
     end_of_day = datetime(yesterday.year, yesterday.month, yesterday.day, 23, 59, 59)
-    sTimestamp = str(round(time.mktime(start_of_day.timetuple())) * 1000)
-    eTimestamp = str(round(time.mktime(end_of_day.timetuple())) * 1000)
+    s_timestamp = str(round(time.mktime(start_of_day.timetuple())) * 1000)
+    e_timestamp = str(round(time.mktime(end_of_day.timetuple())) * 1000)
 
-    formated_date = datetime.strftime(yesterday, '%Y-%m-%d')
+    formatted_date = datetime.strftime(yesterday, '%Y-%m-%d')
 
-    allTasks = clickup.getTasksForAllMembers(sTimestamp, eTimestamp)
-    file_path = func.generateReport(allTasks, formated_date)
+    all_tasks = clickup.get_tasks_for_all_members(s_timestamp, e_timestamp)
+    file_path = func.generate_report(all_tasks, formatted_date)
 
     user = client.get_user(constants.CHARMI_DISCORD)
-    await user.send(f"Here's daily report of {formated_date}", file=discord.File(file_path))
+    await user.send(f"Here's daily report of {formatted_date}", file=discord.File(file_path))
+    func.clear_cache()
 
 
-async def sendMorningMessage():
+async def send_morning_message():
     print("===> SEND MORNING MESSAGE")
 
     yesterday = datetime.today() - timedelta(1)
-    sTimestamp, eTimestamp = func.getTimestamps(yesterday)
+    s_timestamp, e_timestamp = func.get_timestamps(yesterday)
 
-    allTasks = clickup.getTasksForAllMembers(sTimestamp, eTimestamp)
-    sortedData = func.sortData(allTasks)
-    userIds = func.getUserIds()
-    reducedData, hours = func.reduceData(sortedData, userIds, getHours=True)
+    all_tasks = clickup.get_tasks_for_all_members(s_timestamp, e_timestamp)
+    sorted_data = func.sort_data(all_tasks)
+    user_ids = func.get_user_ids()
+    reduced_data, hours = func.reduce_data(sorted_data, user_ids, get_hours=True)
 
     for record in hours:
         if record[1] >= 10:
-            discordId = func.getDiscordId(record[0])
-            user = client.get_user(int(discordId))
+            discord_id = func.get_discord_id(record[0])
+            user = client.get_user(int(discord_id))
             await user.send(messages['morning_clickup_msg'])
             await asyncio.sleep(1)
 
 
-async def wishDay():
+async def wish_day():
     print("===> WISH DAY")
 
     celebration_channel = client.get_channel(constants.CELEBRATION_CHANNEL)
-    birthdays, work_anniversary = clickup.checkForDay()
-    # birthdays, work_anniversary = [['Parth Panchal', '927786642721341490', '04-08'],['Parth Panchal', '927786642721341490', '04-08'],['Parth Panchal', '927786642721341490', '04-08']], [['Parth Panchal', '927786642721341490', '04-08'],['Parth Panchal', '927786642721341490', '04-08']]
+    birthdays, work_anniversary = clickup.check_for_day()
 
     if len(birthdays) > 0:
         string = 'Happy birthday '
@@ -234,21 +274,21 @@ async def wishDay():
         await celebration_channel.send(message)
 
 
-async def testMessage():
+async def test_message():
     print("===> called")
     channel = client.get_channel(constants.CELEBRATION_CHANNEL)
     await channel.send('Test message')
 
 
-async def sendMonthEndMessage():
+async def send_month_end_message():
     print("===> SEND MONTH END MESSAGE")
-    ids = func.getDiscordIds()
+    ids = func.get_discord_ids()
     for i in ids:
         user = client.get_user(int(i))
         await user.send(messages['monthend_message'])
 
 
-async def createThread(date, channel_id, is_morning, channel_name, is_java_update=False):
+async def create_thread(date, channel_id, is_morning, channel_name, is_java_update=False):
     channel = client.get_channel(channel_id)
     if is_morning:
         name = "🌞 " + date
@@ -262,55 +302,55 @@ async def createThread(date, channel_id, is_morning, channel_name, is_java_updat
     print(f"===> {channel_name} THREAD CREATED")
 
 
-
-async def backgroundJob():
+async def background_job():
     while True:
         now = datetime.now(tz_IN)
         monthend = calendar.monthrange(now.year, now.month)[1]
 
         # send morning message to those whose yesterday clickup hours is > 10
         if now.hour == constants.MORNING_TIME[0] and now.minute == constants.MORNING_TIME[1] and now.weekday() <= 4:
-            await sendMorningMessage()
+            await send_morning_message()
 
         # send evening clickup message to all everyday.
         if now.hour == constants.EVENING_TIME[0] and now.minute == constants.EVENING_TIME[1] and now.weekday() <= 4:
-            await sendEveningMessage()
+            await send_evening_message()
 
         # send everyday report to HR
         if now.hour == constants.REPORTING_TIME[0] and now.minute == constants.REPORTING_TIME[1] and now.weekday() <= 4:
-            await sendEverydayReportToHR()
+            await send_everyday_report_to_hr()
 
         # send wishing message in celebration channel
         if now.hour == constants.CELEBRATE_TIME[0] and now.minute == constants.CELEBRATE_TIME[1]:
-            await wishDay()
+            await wish_day()
 
         # send month-end clickup warning message
-        if (now.day == monthend or now.day == monthend - 1) and now.hour == constants.MORNING_THREAD_TIME[0] and now.minute == constants.MORNING_THREAD_TIME[1]:
-            await sendMonthEndMessage()
+        if (now.day == monthend or now.day == monthend - 1) and now.hour == constants.MORNING_THREAD_TIME[
+            0] and now.minute == constants.MORNING_THREAD_TIME[1]:
+            await send_month_end_message()
 
         # create morning thread
         if now.hour == constants.MORNING_THREAD_TIME[0] and now.minute == constants.MORNING_THREAD_TIME[
             1] and now.weekday() <= 4:
             date = now.strftime('%d.%m.%Y')
-            await createThread(date, constants.LARAVEL_CHANNEL, True, "LARAVEL")
-            await createThread(date, constants.DESIGN_CHANNEL, True, "DESIGN")
-            await createThread(date, constants.CMS_CHANNEL, True, "CMS")
-            await createThread(date, constants.JAVA_UPDATES_CHANNEL, True, "JAVA_UPDATES", is_java_update=True)
-            await createThread(date, constants.JAVASCRIPT_CHANNEL, True, "JAVASCRIPT_CHANNEL")
-            await createThread(date, constants.SALES_CHANNEL, True, "SALES_CHANNEL")
-            await createThread(date, constants.MOBILE_CHANNEL, True, "MOBILE_CHANNEL")
+            await create_thread(date, constants.LARAVEL_CHANNEL, True, "LARAVEL")
+            await create_thread(date, constants.DESIGN_CHANNEL, True, "DESIGN")
+            await create_thread(date, constants.CMS_CHANNEL, True, "CMS")
+            await create_thread(date, constants.JAVA_UPDATES_CHANNEL, True, "JAVA_UPDATES", is_java_update=True)
+            await create_thread(date, constants.JAVASCRIPT_CHANNEL, True, "JAVASCRIPT_CHANNEL")
+            await create_thread(date, constants.SALES_CHANNEL, True, "SALES_CHANNEL")
+            # await create_thread(date, constants.MOBILE_CHANNEL, True, "MOBILE_CHANNEL")
 
         # create evening thread
         if now.hour == constants.EVENING_THREAD_TIME[0] and now.minute == constants.EVENING_THREAD_TIME[
             1] and now.weekday() <= 4:
             date = now.strftime('%d.%m.%Y')
-            await createThread(date, constants.LARAVEL_CHANNEL, False, "LARAVEL")
-            await createThread(date, constants.DESIGN_CHANNEL, False, "DESIGN")
-            await createThread(date, constants.CMS_CHANNEL, False, "CMS")
-            await createThread(date, constants.JAVA_UPDATES_CHANNEL, False, "JAVA_UPDATES", is_java_update=True)
-            await createThread(date, constants.JAVASCRIPT_CHANNEL, False, "JAVASCRIPT_CHANNEL")
-            await createThread(date, constants.SALES_CHANNEL, False, "SALES_CHANNEL")
-            await createThread(date, constants.MOBILE_CHANNEL, False, "MOBILE_CHANNEL")
+            await create_thread(date, constants.LARAVEL_CHANNEL, False, "LARAVEL")
+            await create_thread(date, constants.DESIGN_CHANNEL, False, "DESIGN")
+            await create_thread(date, constants.CMS_CHANNEL, False, "CMS")
+            await create_thread(date, constants.JAVA_UPDATES_CHANNEL, False, "JAVA_UPDATES", is_java_update=True)
+            await create_thread(date, constants.JAVASCRIPT_CHANNEL, False, "JAVASCRIPT_CHANNEL")
+            await create_thread(date, constants.SALES_CHANNEL, False, "SALES_CHANNEL")
+            # await create_thread(date, constants.MOBILE_CHANNEL, False, "MOBILE_CHANNEL")
 
         await asyncio.sleep(60)
 
