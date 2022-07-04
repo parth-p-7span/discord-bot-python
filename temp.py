@@ -9,7 +9,7 @@ import constants
 import time
 import clickup
 import func
-
+from string import Template
 
 def get_meme():
     response = requests.get(constants.meme_url + 'programming')
@@ -24,4 +24,12 @@ def get_meme():
     meme = random.choice(imgs)
     urllib.request.urlretrieve(meme, "temp.jpg")
 
-clickup.create_json()
+# clickup.create_json()
+
+
+# email = "nishant@7span.com"
+#
+# user_task_id = clickup.get_user_task_id(email)
+# clickup_id = clickup.get_clickup_id(email)
+#
+# print(user_task_id, clickup_id)

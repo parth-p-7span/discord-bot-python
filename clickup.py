@@ -114,7 +114,6 @@ def create_json():
             click_up_id = task['custom_fields'][16]['value']
             discord_id = task['custom_fields'][17]['value']
         except Exception as e:
-            print("[CREATE_JSON EXCEPTION] : ", str(e))
             click_up_id = ''
             discord_id = ''
         users.append({'name': name, 'email': email, 'click_up_id': click_up_id, 'discord_id': discord_id})

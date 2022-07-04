@@ -12,6 +12,7 @@ import requests
 from bs4 import BeautifulSoup
 import random
 import urllib.request
+from string import Template
 
 import termtables as tt
 
@@ -40,7 +41,7 @@ async def on_ready():
 @client.command(name="test")
 async def test(ctx):
     if ctx.channel.type != discord.ChannelType.private:
-        await ctx.send('DM kar ne bhai')
+        await ctx.send(messages['dm_kar_bhai'])
         return
     print('-------', ctx.channel, '---', type(ctx.channel))
     await ctx.send(f'Tested!')
@@ -49,7 +50,7 @@ async def test(ctx):
 @client.command()
 async def register(ctx, email):
     if ctx.channel.type != discord.ChannelType.private:
-        await ctx.send('DM kar ne bhai')
+        await ctx.send(messages['dm_kar_bhai'])
         return
     if email != '':
         discord_id = str(ctx.message.author.id)
@@ -64,19 +65,19 @@ async def register(ctx, email):
         else:
             await ctx.send(messages['something_went_wrong'])
     else:
-        await ctx.send('Please provide your email address!')
+        await ctx.send(messages['provide_email'])
 
 
 @client.command(aliases=['clear-cache'])
 async def clear_cache(ctx):
     if ctx.channel.type != discord.ChannelType.private:
-        await ctx.send('DM kar ne bhai')
+        await ctx.send(messages['dm_kar_bhai'])
         return
     result = func.clear_cache()
     if result:
-        await ctx.send('All daily report cache has been cleared!')
+        await ctx.send(messages['cached_data_cleared_msg'])
     else:
-        await ctx.send('Something went wrong!')
+        await ctx.send(messages['something_went_wrong'])
 
 
 @client.command()
@@ -103,32 +104,32 @@ async def fact(ctx):
         await ctx.send(text)
     except Exception as e:
         print(e)
-        await ctx.send('Approximately 7.5% of all office documents get lost')
+        await ctx.send(messages['default_quote'])
 
 
 @client.command()
-async def broadcast(ctx, message=''):
+async def broadcast(ctx, message):
     discord_id = ctx.message.author.id
     if discord_id not in [constants.CHARMI_DISCORD, constants.HARSH_DISCORD, constants.PARTH_DISCORD]:
-        await ctx.send('Permission denied.')
+        await ctx.send(messages['permission_denied_msg'])
         return
-    ids = func.get_discord_ids()
-    for uid in ids:
-        user = client.get_user(uid)
-        await user.send(message)
-        await asyncio.sleep(0.5)
-    await ctx.send('Message has been broadcast successfully.')
+    members = client.get_all_members()
+    for m in members:
+        if m.id != constants.BOT_DISCORD and m.bot == False:
+            await m.send(message)
+            print("BROADCAST SENT TO => ", m.name)
+            await asyncio.sleep(0.5)
 
 
 @client.command()
 async def compare(ctx):
-    await ctx.send(f'7Span ka ek hi Bot {client.user.mention}... {client.user.mention}...')
+    await ctx.send(Template(messages['compare_fun_msg']).substitute(id=str(constants.BOT_DISCORD)))
 
 
 @client.command()
 async def eod(ctx, date=''):
     if ctx.channel.type != discord.ChannelType.private:
-        await ctx.send('DM kar ne bhai')
+        await ctx.send(messages['dm_kar_bhai'])
         return
     if date == '':
         dt = datetime.now(tz_IN)
@@ -229,9 +230,12 @@ async def send_evening_message():
         await asyncio.sleep(1)
 
 
-async def send_everyday_report_to_hr():
+async def send_everyday_report_to_hr(is_monday):
     print("===> SEND REPORT TO HR")
-    yesterday = datetime.today() - timedelta(1)
+    if is_monday:
+        yesterday = datetime.today() - timedelta(3)
+    else:
+        yesterday = datetime.today() - timedelta(1)
 
     start_of_day = datetime(yesterday.year, yesterday.month, yesterday.day, 0, 0, 0)
     end_of_day = datetime(yesterday.year, yesterday.month, yesterday.day, 23, 59, 59)
@@ -288,12 +292,6 @@ async def wish_day():
         await celebration_channel.send(message)
 
 
-async def test_message():
-    print("===> called")
-    channel = client.get_channel(constants.CELEBRATION_CHANNEL)
-    await channel.send('Test message')
-
-
 async def send_month_end_message():
     print("===> SEND MONTH END MESSAGE")
     ids = func.get_discord_ids()
@@ -312,7 +310,7 @@ async def create_thread(date, channel_id, is_morning, channel_name, is_java_upda
     if is_java_update:
         await thread.send(messages['java_daily_updates_msg'])
     else:
-        await thread.send("Please enter updates of " + date)
+        await thread.send(Template(messages['thread_msg']).substitute(date=date))
     print(f"===> {channel_name} THREAD CREATED")
 
 
@@ -331,7 +329,7 @@ async def background_job():
 
         # send everyday report to HR
         if now.hour == constants.REPORTING_TIME[0] and now.minute == constants.REPORTING_TIME[1] and now.weekday() <= 4:
-            await send_everyday_report_to_hr()
+            await send_everyday_report_to_hr(now.weekday() == 0)
 
         # send wishing message in celebration channel
         if now.hour == constants.CELEBRATE_TIME[0] and now.minute == constants.CELEBRATE_TIME[1]:
@@ -373,10 +371,10 @@ async def background_job():
 async def on_member_join(member):
     await member.create_dm()
     await member.dm_channel.send(
-        f"Hi {member.name},\nwelcome to 7Span's Discord server, enter `\\help` command for more information."
+        Template(messages['welcome_to_server_msg']).substitute(name=str(member.name))
     )
     user = client.get_user(constants.HARSH_DISCORD)
-    await user.send(f"{member.mention} joined 7Span's Discord server.")
+    await user.send(Template(messages['user_has_joined_server_msg']).substitute(id=str(member.id)))
 
 
 if __name__ == "__main__":
