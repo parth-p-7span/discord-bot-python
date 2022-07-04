@@ -41,7 +41,7 @@ def get_user_task_id(email):
             if task['custom_fields'][4]['value'] == email:
                 return task['id']
         except Exception as e:
-            print("[EXCEPTION] : ", str(e))
+            print("[GET_USER_TASK_ID EXCEPTION] : ", str(e))
             pass
 
     return constants.STATUS_NO_CONTENT
@@ -109,13 +109,12 @@ def create_json():
         try:
             email = task['custom_fields'][4]['value']
         except Exception as e:
-            print("[EXCEPTION] : ", str(e))
             email = ''
         try:
             click_up_id = task['custom_fields'][16]['value']
             discord_id = task['custom_fields'][17]['value']
         except Exception as e:
-            print("[EXCEPTION] : ", str(e))
+            print("[CREATE_JSON EXCEPTION] : ", str(e))
             click_up_id = ''
             discord_id = ''
         users.append({'name': name, 'email': email, 'click_up_id': click_up_id, 'discord_id': discord_id})
@@ -185,7 +184,6 @@ def check_for_day():
             if join_date == today:
                 work_anniversary_guys.append([user['name'], user['custom_fields'][18]['value'], join_date])
         except Exception as e:
-            print("[EXCEPTION] : ", str(e))
-            pass
+            print("[WISH_DAY EXCEPTION] : ", str(e))
     return birthday_guys, work_anniversary_guys
 

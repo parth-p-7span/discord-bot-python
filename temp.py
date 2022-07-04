@@ -1,8 +1,14 @@
+import datetime
+
 import requests
 from bs4 import BeautifulSoup
 import random
 import urllib.request
 import constants
+
+import time
+import clickup
+import func
 
 
 def get_meme():
@@ -18,6 +24,4 @@ def get_meme():
     meme = random.choice(imgs)
     urllib.request.urlretrieve(meme, "temp.jpg")
 
-res = requests.get(constants.facts_url, headers={'X-Api-Key': constants.facts_api_key})
-
-print(res.json()[0]['fact'])
+clickup.create_json()

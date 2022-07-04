@@ -107,6 +107,20 @@ async def fact(ctx):
 
 
 @client.command()
+async def broadcast(ctx, message=''):
+    discord_id = ctx.message.author.id
+    if discord_id not in [constants.CHARMI_DISCORD, constants.HARSH_DISCORD, constants.PARTH_DISCORD]:
+        await ctx.send('Permission denied.')
+        return
+    ids = func.get_discord_ids()
+    for uid in ids:
+        user = client.get_user(uid)
+        await user.send(message)
+        await asyncio.sleep(0.5)
+    await ctx.send('Message has been broadcast successfully.')
+
+
+@client.command()
 async def compare(ctx):
     await ctx.send(f'7Span ka ek hi Bot {client.user.mention}... {client.user.mention}...')
 
