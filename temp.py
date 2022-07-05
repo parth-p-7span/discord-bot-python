@@ -33,3 +33,5 @@ def get_meme():
 # clickup_id = clickup.get_clickup_id(email)
 #
 # print(user_task_id, clickup_id)
+a,b = clickup.check_for_day()
+print(a, b)

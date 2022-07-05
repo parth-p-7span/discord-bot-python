@@ -277,6 +277,8 @@ async def wish_day():
     celebration_channel = client.get_channel(constants.CELEBRATION_CHANNEL)
     birthdays, work_anniversary = clickup.check_for_day()
 
+    print(birthdays, work_anniversary)
+
     if len(birthdays) > 0:
         string = 'Happy birthday '
         for i in birthdays:

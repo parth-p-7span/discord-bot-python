@@ -179,9 +179,10 @@ def check_for_day():
             join_date = format_datetime.get_date(joining_day_field['value'])
             birth_date = format_datetime.get_date(birthday_field['value'])
             if birth_date == today:
-                birthday_guys.append([user['name'], user['custom_fields'][18]['value'], birth_date])
+                birthday_guys.append([user['name'], user['custom_fields'][17]['value'], birth_date])
             if join_date == today:
-                work_anniversary_guys.append([user['name'], user['custom_fields'][18]['value'], join_date])
+                print(user['custom_fields'])
+                work_anniversary_guys.append([user['name'], user['custom_fields'][17]['value'], join_date])
         except Exception as e:
             print("[WISH_DAY EXCEPTION] : ", str(e))
     return birthday_guys, work_anniversary_guys
