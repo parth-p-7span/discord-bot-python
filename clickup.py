@@ -36,6 +36,7 @@ def get_user_task_id(email):
         tasks = tasks + request.json()['tasks']
         count = len(request.json()['tasks'])
 
+    print('get_user_task_id', len(tasks))
     for index, task in enumerate(tasks):
         try:
             if task['custom_fields'][4]['value'] == email:

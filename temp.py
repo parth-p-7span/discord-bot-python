@@ -27,11 +27,12 @@ def get_meme():
 # clickup.create_json()
 
 
-# email = "nishant@7span.com"
+email = "pratik.m@7span.com"
+
+user_task_id = clickup.get_user_task_id(email)
+clickup_id = clickup.get_clickup_id(email)
 #
-# user_task_id = clickup.get_user_task_id(email)
-# clickup_id = clickup.get_clickup_id(email)
-#
-# print(user_task_id, clickup_id)
-a,b = clickup.check_for_day()
-print(a, b)
+print(user_task_id, clickup_id)
+# a,b = clickup.check_for_day()
+# print(a, b)
+

@@ -48,6 +48,11 @@ async def test(ctx):
 
 
 @client.command()
+async def wish(ctx):
+    await wish_day()
+
+
+@client.command()
 async def register(ctx, email):
     if ctx.channel.type != discord.ChannelType.private:
         await ctx.send(messages['dm_kar_bhai'])
