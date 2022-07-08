@@ -115,3 +115,11 @@ def create_image(tasks):
     df1 = df.style.set_table_styles([dict(selector='th', props=[('text-align', 'center')])])
     df1.set_properties(**{'text-align': 'center'}).hide(axis='index')
     dfi.export(df1, 'temp/test.png', )
+
+
+def get_month_name(month):
+    with open('months.json', 'r') as f:
+        data = json.loads(f.read())
+    for k, d in data.items():
+        if d == int(month):
+            return k

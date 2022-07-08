@@ -48,8 +48,32 @@ async def test(ctx):
 
 
 @client.command()
-async def wish(ctx):
-    await wish_day()
+async def summary(ctx, month=''):
+    if ctx.channel.type != discord.ChannelType.private:
+        await ctx.send(messages['dm_kar_bhai'])
+        return
+    now = datetime.now(tz_IN)
+    if month == "":
+        month = str(now.month)
+
+    start_of_day = datetime(now.year, int(month), 1, 0, 0, 0)
+    month_range = calendar.monthrange(now.year, int(month))
+    end_of_day = datetime(now.year, int(month), month_range[1], 23, 59, 59)
+    s_timestamp = str(round(time.mktime(start_of_day.timetuple())) * 1000)
+    e_timestamp = str(round(time.mktime(end_of_day.timetuple())) * 1000)
+
+    hours, mins = clickup.get_monthly_hours(s_timestamp, e_timestamp, func.find_click_id(ctx.message.author.id))
+    my_data = [["From", f'{start_of_day.day}-{start_of_day.month}-{start_of_day.year}'], ["To", f'{end_of_day.day}-{end_of_day.month}-{end_of_day.year}'], ["Hours", hours], ["Minutes", mins]]
+
+    table = tt.to_string(
+        my_data,
+        style=tt.styles.rounded_thick,
+        padding=(0, 3),
+    )
+
+    string = f"{Template(messages['summary_msg']).substitute(month=func.get_month_name(month))}\n`{table}`"
+
+    await ctx.send(string)
 
 
 @client.command()
@@ -197,6 +221,9 @@ async def help(ctx):
         [messages['command_1'], messages['command_1_msg']],
         [messages['command_2'], messages['command_2_msg']],
         [messages['command_3'], messages['command_3_msg']],
+        [messages['command_4'], messages['command_4_msg']],
+        [messages['command_5'], messages['command_5_msg']],
+        [messages['command_6'], messages['command_6_msg']],
     ]
     message = tt.to_string(
         helps,
@@ -213,6 +240,13 @@ async def help(ctx):
 async def refresh(ctx):
     clickup.create_json()
     await ctx.send(messages['data_refreshed'])
+
+
+
+@client.command()
+async def temp(ctx):
+    channel = client.get_channel(constants.CELEBRATION_CHANNEL)
+    await channel.send("aaj Friday nahi Thursday hai <@879986324415873054>")
 
 
 @client.command()

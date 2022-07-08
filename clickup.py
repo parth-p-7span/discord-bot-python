@@ -3,7 +3,7 @@ import requests
 import constants
 import format_datetime
 import func
-from datetime import datetime
+from datetime import datetime, timedelta
 import pytz
 
 
@@ -188,3 +188,18 @@ def check_for_day():
             print("[WISH_DAY EXCEPTION] : ", str(e))
     return birthday_guys, work_anniversary_guys
 
+
+def get_monthly_hours(s_timestamp, e_timestamp, user_id):
+    response = requests.get(
+        url=f'{constants.getTeam}/604747/time_entries?start_date={s_timestamp}&end_date={e_timestamp}&assignee={user_id}',
+        headers=constants.header
+    )
+    data = response.json()['data']
+    total_seconds = 0
+    for d in data:
+        total_seconds += int(d['duration'])
+    total_seconds = total_seconds // 1000
+    temp = timedelta(seconds=total_seconds)
+    hours, mins = format_datetime.convert(temp.seconds * 1000)
+    hours += temp.days * 24
+    return hours, mins
