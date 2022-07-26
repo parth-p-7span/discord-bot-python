@@ -6,7 +6,7 @@ import pandas as pd
 from datetime import datetime
 import time
 
-import dataframe_image as dfi
+# import dataframe_image as dfi
 
 
 def sort_data(data):
@@ -109,12 +109,12 @@ def clear_cache():
         print('CLEAR CACHE ERROR => ', e)
         return False
 
-
-def create_image(tasks):
-    df = pd.DataFrame(tasks, columns=['Task Name', 'Hours', 'Start', 'End'])
-    df1 = df.style.set_table_styles([dict(selector='th', props=[('text-align', 'center')])])
-    df1.set_properties(**{'text-align': 'center'}).hide(axis='index')
-    dfi.export(df1, 'temp/test.png', )
+#
+# def create_image(tasks):
+#     df = pd.DataFrame(tasks, columns=['Task Name', 'Hours', 'Start', 'End'])
+#     df1 = df.style.set_table_styles([dict(selector='th', props=[('text-align', 'center')])])
+#     df1.set_properties(**{'text-align': 'center'}).hide(axis='index')
+#     dfi.export(df1, 'temp/test.png', )
 
 
 def get_month_name(month):

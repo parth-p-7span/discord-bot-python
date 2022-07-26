@@ -15,12 +15,15 @@ import urllib.request
 from string import Template
 
 import termtables as tt
+from dotenv import load_dotenv
 
 import constants
 import clickup
 import func
 
 tz_IN = pytz.timezone('Asia/Kolkata')
+
+load_dotenv()
 
 intents = discord.Intents.default()
 intents.members = True
@@ -242,7 +245,6 @@ async def refresh(ctx):
     await ctx.send(messages['data_refreshed'])
 
 
-
 @client.command()
 async def temp(ctx):
     channel = client.get_channel(constants.CELEBRATION_CHANNEL)
@@ -417,8 +419,5 @@ async def on_member_join(member):
     user = client.get_user(constants.HARSH_DISCORD)
     await user.send(Template(messages['user_has_joined_server_msg']).substitute(id=str(member.id)))
 
-
 if __name__ == "__main__":
-    client.run(constants.TOKEN)
-
-print("testing----")
+    client.run(os.getenv('TOKEN'))
