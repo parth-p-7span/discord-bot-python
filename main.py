@@ -244,7 +244,6 @@ async def refresh(ctx):
     clickup.create_json()
     await ctx.send(messages['data_refreshed'])
 
-
 @client.command()
 async def temp(ctx):
     channel = client.get_channel(constants.CELEBRATION_CHANNEL)

@@ -1,7 +1,3 @@
-# Discord Bot Token
-# TOKEN = 'OTczMjA0NzA5NzczMDQxNzE1.G3DzZf.TeJYGRlkmRgJ06ILXbHCk0sJZLhkPVsz85Sruk'  # FirstBot
-TOKEN = 'OTc2MDI3NTEyOTE0MTkwMzQ2.GJRx8J.pt8410Jje3BtZSLpgQ6j2fjeB6_wbH2NMCYuDs'  # Sevenβ
-
 # APIs
 getTeam = "https://api.clickup.com/api/v2/team"
 getTask = "https://api.clickup.com/api/v2/task"
