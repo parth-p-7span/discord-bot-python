@@ -246,12 +246,6 @@ async def refresh(ctx):
 
 
 @client.command()
-async def temp(ctx):
-    channel = client.get_channel(constants.CELEBRATION_CHANNEL)
-    await channel.send("aaj Friday nahi Thursday hai <@879986324415873054>")
-
-
-@client.command()
 async def purge(ctx, count):
     discord_id = ctx.message.author.id
     if discord_id == constants.HARSH_DISCORD:
