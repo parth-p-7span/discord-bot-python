@@ -52,6 +52,7 @@ async def test(ctx):
 
 @client.command()
 async def summary(ctx, month=''):
+    print('CALLED => SUMMARY')
     if ctx.channel.type != discord.ChannelType.private:
         await ctx.send(messages['dm_kar_bhai'])
         return
@@ -81,6 +82,7 @@ async def summary(ctx, month=''):
 
 @client.command()
 async def register(ctx, email):
+    print('CALLED => REGISTER')
     if ctx.channel.type != discord.ChannelType.private:
         await ctx.send(messages['dm_kar_bhai'])
         return
@@ -114,6 +116,7 @@ async def clear_cache(ctx):
 
 @client.command()
 async def meme(ctx, tag="programming"):
+    print('CALLED => MEME')
     response = requests.get(constants.meme_url + tag)
     soup = BeautifulSoup(response.content, 'lxml')
     divs = soup.find_all('div', class_='item-aux-container')
@@ -130,6 +133,7 @@ async def meme(ctx, tag="programming"):
 
 @client.command()
 async def fact(ctx):
+    print('CALLED => FACT')
     try:
         res = requests.get(constants.facts_url, headers={'X-Api-Key': constants.facts_api_key})
         text = res.json()[0]['fact']
@@ -141,6 +145,7 @@ async def fact(ctx):
 
 @client.command()
 async def broadcast(ctx, message):
+    print('CALLED => BROADCAST')
     discord_id = ctx.message.author.id
     if discord_id not in [constants.CHARMI_DISCORD, constants.HARSH_DISCORD, constants.PARTH_DISCORD]:
         await ctx.send(messages['permission_denied_msg'])
@@ -160,6 +165,7 @@ async def compare(ctx):
 
 @client.command()
 async def eod(ctx, date=''):
+    print('CALLED => EOD')
     if ctx.channel.type != discord.ChannelType.private:
         await ctx.send(messages['dm_kar_bhai'])
         return
@@ -220,6 +226,7 @@ async def eod(ctx, date=''):
 
 @client.command()
 async def help(ctx):
+    print('CALLED => HELP')
     helps = [
         [messages['command_1'], messages['command_1_msg']],
         [messages['command_2'], messages['command_2_msg']],
@@ -241,6 +248,7 @@ async def help(ctx):
 
 @client.command(aliases=['refresh-data'])
 async def refresh(ctx):
+    print('CALLED => REFRESH')
     clickup.create_json()
     await ctx.send(messages['data_refreshed'])
 
@@ -406,6 +414,7 @@ async def background_job():
 
 @client.event
 async def on_member_join(member):
+    print('==> NEW MEMBER JOINED')
     await member.create_dm()
     await member.dm_channel.send(
         Template(messages['welcome_to_server_msg']).substitute(name=str(member.name))

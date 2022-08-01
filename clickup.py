@@ -132,7 +132,6 @@ def get_tasks(start_date, end_date, discord_id):
             end_date) + '&assignee=' + assignee,
         headers=constants.header
     )
-    print(request.json()['data'])
     for index,task in enumerate(request.json()['data']):
         try:
             t_name = task['task']['name']
