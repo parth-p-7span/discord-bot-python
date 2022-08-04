@@ -42,7 +42,7 @@ with open('messages.json', 'r') as f:
 logger = logging.getLogger(__name__)
 
 # create handler
-handler = TimedRotatingFileHandler(filename='runtime.log', when='D', interval=1, backupCount=90, encoding='utf-8', delay=False)
+handler = TimedRotatingFileHandler(filename='logs/runtime.log', when='D', interval=1, backupCount=90, encoding='utf-8', delay=False)
 
 # create formatter and add to handler
 formatter = Formatter(fmt='%(asctime)s - %(message)s')
