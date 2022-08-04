@@ -1,6 +1,9 @@
 import asyncio
 import json
 import os
+import logging
+from logging.handlers import TimedRotatingFileHandler
+from logging import Formatter
 
 from discord.ext import commands
 import discord
@@ -35,9 +38,27 @@ with open('messages.json', 'r') as f:
     messages = json.load(f)
 
 
+# get named logger
+logger = logging.getLogger(__name__)
+
+# create handler
+handler = TimedRotatingFileHandler(filename='runtime.log', when='D', interval=1, backupCount=90, encoding='utf-8', delay=False)
+
+# create formatter and add to handler
+formatter = Formatter(fmt='%(asctime)s - %(message)s')
+handler.setFormatter(formatter)
+
+# add the handler to named logger
+logger.addHandler(handler)
+
+# set the logging level
+logger.setLevel(logging.INFO)
+
+
 @client.event
 async def on_ready():
     client.loop.create_task(background_job())
+    logger.info(f'{client.user} has Awoken!')
     print(f'{client.user} has Awoken!')
 
 
@@ -47,11 +68,13 @@ async def test(ctx):
         await ctx.send(messages['dm_kar_bhai'])
         return
     print('-------', ctx.channel, '---', type(ctx.channel))
+    logger.info(f'-------{ctx.channel}---{type(ctx.channel)}')
     await ctx.send(f'Tested!')
 
 
 @client.command()
 async def summary(ctx, month=''):
+    logger.info('CALLED => SUMMARY')
     print('CALLED => SUMMARY')
     if ctx.channel.type != discord.ChannelType.private:
         await ctx.send(messages['dm_kar_bhai'])
@@ -83,6 +106,7 @@ async def summary(ctx, month=''):
 @client.command()
 async def register(ctx, email):
     print('CALLED => REGISTER')
+    logger.info(f'CALLED => REGISTER {email}')
     if ctx.channel.type != discord.ChannelType.private:
         await ctx.send(messages['dm_kar_bhai'])
         return
@@ -104,6 +128,7 @@ async def register(ctx, email):
 
 @client.command(aliases=['clear-cache'])
 async def clear_cache(ctx):
+    logger.info('CALLED => CLEAR CACHE')
     if ctx.channel.type != discord.ChannelType.private:
         await ctx.send(messages['dm_kar_bhai'])
         return
@@ -117,6 +142,7 @@ async def clear_cache(ctx):
 @client.command()
 async def meme(ctx, tag="programming"):
     print('CALLED => MEME')
+    logger.info('CALLED => MEME')
     response = requests.get(constants.meme_url + tag)
     soup = BeautifulSoup(response.content, 'lxml')
     divs = soup.find_all('div', class_='item-aux-container')
@@ -134,6 +160,7 @@ async def meme(ctx, tag="programming"):
 @client.command()
 async def fact(ctx):
     print('CALLED => FACT')
+    logger.info('CALLED => FACT')
     try:
         res = requests.get(constants.facts_url, headers={'X-Api-Key': constants.facts_api_key})
         text = res.json()[0]['fact']
@@ -146,6 +173,7 @@ async def fact(ctx):
 @client.command()
 async def broadcast(ctx, message):
     print('CALLED => BROADCAST')
+    logger.info('CALLED => BROADCAST')
     discord_id = ctx.message.author.id
     if discord_id not in [constants.CHARMI_DISCORD, constants.HARSH_DISCORD, constants.PARTH_DISCORD]:
         await ctx.send(messages['permission_denied_msg'])
@@ -155,6 +183,7 @@ async def broadcast(ctx, message):
         if m.id != constants.BOT_DISCORD and m.bot == False:
             await m.send(message)
             print("BROADCAST SENT TO => ", m.name)
+            logger.info(f"BROADCAST SENT TO => {m.name}")
             await asyncio.sleep(0.5)
 
 
@@ -166,6 +195,7 @@ async def compare(ctx):
 @client.command()
 async def eod(ctx, date=''):
     print('CALLED => EOD')
+    logger.info('CALLED => EOD')
     if ctx.channel.type != discord.ChannelType.private:
         await ctx.send(messages['dm_kar_bhai'])
         return
@@ -227,6 +257,7 @@ async def eod(ctx, date=''):
 @client.command()
 async def help(ctx):
     print('CALLED => HELP')
+    logger.info('CALLED => HELP')
     helps = [
         [messages['command_1'], messages['command_1_msg']],
         [messages['command_2'], messages['command_2_msg']],
@@ -249,6 +280,7 @@ async def help(ctx):
 @client.command(aliases=['refresh-data'])
 async def refresh(ctx):
     print('CALLED => REFRESH')
+    logger.info('CALLED => REFRESH')
     clickup.create_json()
     await ctx.send(messages['data_refreshed'])
 
@@ -258,13 +290,16 @@ async def purge(ctx, count):
     discord_id = ctx.message.author.id
     if discord_id == constants.HARSH_DISCORD:
         print("===> PURGING MESSAGES")
+        logger.info("===> PURGING MESSAGES")
         await ctx.channel.purge(limit=count)
     else:
+        logger.info(f"===> {discord_id} PURGE ACCESS DENIED")
         print("===> ", discord_id, " PURGE ACCESS DENIED")
 
 
 async def send_evening_message():
     print("===> SEND EVENING MESSAGE")
+    logger.info("===> SEND EVENING MESSAGE")
     ids = func.get_discord_ids()
     # ids = [927786642721341490]
     for uid in ids:
@@ -275,6 +310,7 @@ async def send_evening_message():
 
 async def send_everyday_report_to_hr(is_monday):
     print("===> SEND REPORT TO HR")
+    logger.info("===> SEND REPORT TO HR")
     if is_monday:
         yesterday = datetime.today() - timedelta(3)
     else:
@@ -297,6 +333,7 @@ async def send_everyday_report_to_hr(is_monday):
 
 async def send_morning_message():
     print("===> SEND MORNING MESSAGE")
+    logger.info("===> SEND MORNING MESSAGE")
 
     yesterday = datetime.today() - timedelta(1)
     s_timestamp, e_timestamp = func.get_timestamps(yesterday)
@@ -316,6 +353,7 @@ async def send_morning_message():
 
 async def wish_day():
     print("===> WISH DAY")
+    logger.info("===> WISH DAY")
 
     celebration_channel = client.get_channel(constants.CELEBRATION_CHANNEL)
     birthdays, work_anniversary = clickup.check_for_day()
@@ -339,6 +377,7 @@ async def wish_day():
 
 async def send_month_end_message():
     print("===> SEND MONTH END MESSAGE")
+    logger.info("===> SEND MONTH END MESSAGE")
     ids = func.get_discord_ids()
     for i in ids:
         user = client.get_user(int(i))
@@ -357,6 +396,7 @@ async def create_thread(date, channel_id, is_morning, channel_name, is_java_upda
     else:
         await thread.send(Template(messages['thread_msg']).substitute(date=date))
     print(f"===> {channel_name} THREAD CREATED")
+    logger.info(f"===> {channel_name} THREAD CREATED")
 
 
 async def background_job():
@@ -415,6 +455,7 @@ async def background_job():
 @client.event
 async def on_member_join(member):
     print('==> NEW MEMBER JOINED')
+    logger.info(f'==> NEW MEMBER JOINED : {member.name}')
     await member.create_dm()
     await member.dm_channel.send(
         Template(messages['welcome_to_server_msg']).substitute(name=str(member.name))
