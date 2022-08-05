@@ -217,6 +217,3 @@ def get_monthly_hours(s_timestamp, e_timestamp, user_id):
     hours, mins = format_datetime.convert(temp.seconds * 1000)
     hours += temp.days * 24
     return hours, mins
-
-
-create_json()
