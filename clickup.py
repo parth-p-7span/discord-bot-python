@@ -88,7 +88,6 @@ def get_clickup_id(email):
 def register(email, discord_id):
     task_id = get_user_task_id(email)
     click_up_id = get_clickup_id(email)
-    print("-->", click_up_id)
     if task_id == constants.STATUS_NO_CONTENT or click_up_id == constants.STATUS_NO_CONTENT:
         return constants.STATUS_NO_CONTENT
     c_response = insert_clickup_id(task_id, click_up_id)
@@ -105,6 +104,18 @@ def create_json():
         headers=constants.header
     )
     tasks = request.json()['tasks']
+    count = len(tasks)
+    page = 0
+
+    while count == 100:
+        page += 1
+        request = requests.get(
+            url=constants.listUrl + "?page=" + str(page),
+            headers=constants.header
+        )
+        tasks = tasks + request.json()['tasks']
+        count = len(request.json()['tasks'])
+
     for task in tasks:
         name = task['name']
         try:
@@ -125,11 +136,11 @@ def create_json():
 
 def get_tasks(start_date, end_date, discord_id):
     assignee = func.find_click_id(discord_id)
+    print("assignee = ", assignee)
     tasks = []
     hours = []
     request = requests.get(
-        url=constants.getTeam + '/604747/time_entries?start_date=' + str(start_date) + '&end_date=' + str(
-            end_date) + '&assignee=' + assignee,
+        url=constants.getTeam + '/604747/time_entries?start_date=' + str(start_date) + '&end_date=' + str(end_date) + '&assignee=' + assignee,
         headers=constants.header
     )
     for index,task in enumerate(request.json()['data']):
@@ -206,3 +217,6 @@ def get_monthly_hours(s_timestamp, e_timestamp, user_id):
     hours, mins = format_datetime.convert(temp.seconds * 1000)
     hours += temp.days * 24
     return hours, mins
+
+
+create_json()
