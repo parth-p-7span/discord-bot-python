@@ -40,9 +40,9 @@ def reduce_data(data, user_ids, get_hours=False):
             if record['id'] == str(user_id):
                 user_hours += int(record['duration'])
                 user_name = record['name']
-        h, m = format_datetime.convert(user_hours)
+        h, m, s = format_datetime.convert_to_hms(user_hours)
         if h != 0:
-            reduced_data.append([user_id, user_name, f'{h}h {m}m'])
+            reduced_data.append([user_id, user_name, f'{h}:{m}:{s}'])
             hours.append([user_id, h])
     if get_hours:
         return reduced_data, hours

@@ -29,6 +29,18 @@ def convert(seconds):
     return hour, minutes
 
 
+def convert_to_hms(seconds):
+    seconds = seconds // 1000
+    seconds = seconds % (24 * 3600)
+    hour = seconds // 3600
+    seconds %= 3600
+    minutes = seconds // 60
+    seconds %= 60
+
+    # return f'{hour}h {minutes}m'
+    return hour, minutes, seconds
+
+
 def get_total_row(tasks, hours):
     mins = 0
     for hour in hours:
@@ -42,3 +54,6 @@ def get_total_row(tasks, hours):
     total = f"{final_hours}h {final_mins}m"
     tasks.append(["Total", total, "", ""])
     return tasks
+
+
+print(convert_to_hms(7872847))
