@@ -180,13 +180,26 @@ def get_tasks_for_all_members(start_date, end_date):
 
 def check_for_day():
     today = datetime.now(tz_IN).strftime('%m-%d')
+
     birthday_guys = []
     work_anniversary_guys = []
+
+    page = 0
     request = requests.get(
-        url=constants.listUrl,
+        url=constants.listUrl + "?page=" + str(page),
         headers=constants.header
     )
+
     tasks = request.json()['tasks']
+    count = len(tasks)
+    while count == 100:
+        page += 1
+        request = requests.get(
+            url=constants.listUrl + "?page=" + str(page),
+            headers=constants.header
+        )
+        tasks = tasks + request.json()['tasks']
+        count = len(request.json()['tasks'])
     for user in tasks:
         try:
             joining_day_field = user['custom_fields'][7]

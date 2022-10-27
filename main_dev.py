@@ -20,7 +20,7 @@ from string import Template
 import termtables as tt
 from dotenv import load_dotenv
 
-import constants
+import constants_dev as constants
 import clickup
 import func
 
@@ -415,14 +415,14 @@ async def wish_day():
 async def send_month_end_message():
     now = datetime.now(tz_IN)
     monthend = calendar.monthrange(now.year, now.month)[1]
-    if now.day == monthend or now.day == monthend - 1:
-        print("===> SEND MONTH END MESSAGE")
-        logger.info("===> SEND MONTH END MESSAGE")
+    # if now.day == monthend or now.day == monthend - 1:
+    print("===> SEND MONTH END MESSAGE")
+    logger.info("===> SEND MONTH END MESSAGE")
 
-        ids = func.get_discord_ids()
-        for i in ids:
-            user = client.get_user(int(i))
-            await user.send(messages['monthend_message'])
+    ids = func.get_discord_ids()
+    for i in ids:
+        user = client.get_user(int(i))
+        await user.send(messages['monthend_message'])
 
 
 async def create_thread(date, channel_id, is_morning, channel_name, is_java_update=False):
