@@ -1,28 +1,28 @@
 # Sevenβ Discord Bot
-A discord bot for 7Span's server. This bot is created using Discord API and ClickUp API. It has the following features
-- Employees can get details of ClickUp task hours
-- Gives monthly summary of ClickUp hours
-- Birthday and work anniversary messages in the celebration channel
-- Gives notification of newly joined users to Harsh Kansagra
+A discord bot for 7Span's server. The [ClickUp API](https://clickup.com/api/) and [Discord.py](https://github.com/Rapptz/discord.py) were used to develop this bot. It has the following features
+- Employees can get details of every day ClickUp task hours.
+- Gives monthly summary of ClickUp hours.
+- Birthday and work anniversary greetings in the celebration channel.
+- Notifies Harsh Kansagra of newly joined users in 7Span server.
 - Send every day report of employees' logged hours to HR in XML file format
-- Creates morning and evening threads in given discord channels for EOD report
-- Broadcast command for the broadcasting message to each user via DM
+- Creates morning and evening threads for the EOD report in the specified Discord channels.
+- A broadcast command that sends a message via DM to every user.
 - Sends random memes of a given category
 - Sends random facts about the world
-- Provides help manual
+- Offers a help manual
 
 
 ## Installation
 ### Create discord application in developer portal
 1. Open the [Discord developer portal](https://discord.com/developers/applications) and log into your account.
-2. Click on the "New Application" button.
-3. Enter a name and confirm the pop-up window by clicking the "Create" button.
-4. Navigate to Bot menu from left side menubar
-5. Add one Bot and setup access token then store it somewhere for later use
-6. Navigate to OAuth2 > URL Generator from left side menubar
-7. Select Bot in scopes field and tick below options in permission field
+2. Select "New Application" from the menu.
+3. Type a name into the pop-up window and click "Create" to confirm.
+4. Use the left-side menubar to access the Bot menu.
+5. Add a single bot, configure the access token, and then keep it somewhere for future usage.
+6. In the menu on the left, select OAuth2 > URL Generator.
+7. Choose Bot in the scopes area and check the below boxes in the permissions options.
 <img src='imgs/1.png'/>
-8. Then copy generated URL and paste it in browser then invite your Bot to your sever.
+8. Next, paste the generated URL into your browser and invite your bot to your server.
 
 ### Now you have to setup project
 1. Install Python3.x in your machine
