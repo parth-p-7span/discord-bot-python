@@ -24,7 +24,7 @@ STATUS_NO_CONTENT = 404
 STATUS_BAD_REQUEST = 400
 
 # auto message timing in (hours, minutes) - 24 hours format UTC Timezone
-MORNING_TIME = ("5", "30")
+MORNING_TIME = ("15", "43")
 EVENING_TIME = ("13", "30")
 REPORTING_TIME = ("6", "0")
 CELEBRATE_TIME = ("0", "30")
