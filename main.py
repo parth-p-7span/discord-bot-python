@@ -42,6 +42,7 @@ with open('messages.json', 'r') as f:
 logger = logging.getLogger(__name__)
 
 # create handler
+# path=os.chdir(str('D:\\workspace\\python\\discord-bot-python\\logs\\runtime.log')) #This command changes directory
 handler = TimedRotatingFileHandler(filename='logs/runtime.log', when='D', interval=1, backupCount=90, encoding='utf-8', delay=False)
 
 # create formatter and add to handler
@@ -67,6 +68,9 @@ async def test(ctx):
     if ctx.channel.type != discord.ChannelType.private:
         await ctx.send(messages['dm_kar_bhai'])
         return
+    # if commands != :
+    #     await ctx.send(messages['please enter proper command'])
+    #     return
     print('-------', ctx.channel, '---', type(ctx.channel))
     logger.info(f'-------{ctx.channel}---{type(ctx.channel)}')
     await ctx.send(f'Tested!')
@@ -85,7 +89,12 @@ async def summary(ctx, month=''):
 
     start_of_day = datetime(now.year, int(month), 1, 0, 0, 0)
     month_range = calendar.monthrange(now.year, int(month))
-    end_of_day = datetime(now.year, int(month), month_range[1], 23, 59, 59)
+    if month == str(now.month):
+        end_of_day = datetime(now.year, now.month, now.day, 0, 0, 0)
+        print(end_of_day)
+    else:
+        end_of_day = datetime(now.year, int(month), month_range[1], 23, 59, 59)
+        print(end_of_day)
     s_timestamp = str(round(time.mktime(start_of_day.timetuple())) * 1000)
     e_timestamp = str(round(time.mktime(end_of_day.timetuple())) * 1000)
 
