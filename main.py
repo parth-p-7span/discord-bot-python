@@ -60,10 +60,14 @@ logger.setLevel(logging.INFO)
 
 @client.event
 async def on_ready():
+
+    """ this will call when the discord bot wake up first time  """
+
     # client.loop.create_task(background_job())
     logger.info(f'{client.user} has Awoken!')
     print(f'{client.user} has Awoken!')
 
+    # setup scheduler for daily crone jobs
     scheduler = AsyncIOScheduler()
     scheduler.add_job(send_morning_message, CronTrigger(hour=constants.MORNING_TIME[0], minute=constants.MORNING_TIME[1], second="0"))
     scheduler.add_job(send_evening_message, CronTrigger(hour=constants.EVENING_TIME[0], minute=constants.EVENING_TIME[1], second="0"))
@@ -77,6 +81,9 @@ async def on_ready():
 
 @client.command(name="test")
 async def test(ctx):
+
+    """ test command to test that bot is responding correctly   """
+
     if ctx.channel.type != discord.ChannelType.private:
         await ctx.send(messages['dm_kar_bhai'])
 
@@ -88,8 +95,13 @@ async def test(ctx):
 
 @client.command()
 async def summary(ctx, month=''):
+
+    """ summary command to get the monthly clickup summary  """
+
     logger.info('CALLED => SUMMARY')
     print('CALLED => SUMMARY')
+
+    # check if user has sent command in server's public channel
     if ctx.channel.type != discord.ChannelType.private:
         await ctx.send(messages['dm_kar_bhai'])
         return
@@ -124,6 +136,9 @@ async def summary(ctx, month=''):
 
 @client.command(name='register')
 async def register(ctx, email=''):
+
+    """ register command to register new user   """
+
     print('CALLED => REGISTER')
     logger.info(f'CALLED => REGISTER {email}')
     if ctx.channel.type != discord.ChannelType.private:
@@ -148,6 +163,9 @@ async def register(ctx, email=''):
 
 @client.command(aliases=['clear-cache'])
 async def clear_cache(ctx):
+
+    """ clear cache command that will clear the cached daily report files - for internal user   """
+
     logger.info('CALLED => CLEAR CACHE')
     if ctx.channel.type != discord.ChannelType.private:
         await ctx.send(messages['dm_kar_bhai'])
@@ -161,6 +179,9 @@ async def clear_cache(ctx):
 
 @client.command()
 async def meme(ctx, tag="programming"):
+
+    """ meme command for getting meme message   """
+
     print('CALLED => MEME')
     logger.info('CALLED => MEME')
     response = requests.get(constants.meme_url + tag)
@@ -179,6 +200,9 @@ async def meme(ctx, tag="programming"):
 
 @client.command()
 async def fact(ctx):
+
+    """ fact command that will send random facts    """
+
     print('CALLED => FACT')
     logger.info('CALLED => FACT')
     try:
@@ -192,6 +216,9 @@ async def fact(ctx):
 
 @client.command()
 async def broadcast(ctx, message):
+
+    """ broadcast command for HR that will broadcast the message in all the user's DM   """
+
     print('CALLED => BROADCAST')
     logger.info('CALLED => BROADCAST')
     discord_id = ctx.message.author.id
@@ -214,6 +241,9 @@ async def compare(ctx):
 
 @client.command()
 async def eod(ctx, date=''):
+
+    """ eod command for send the EOD details to users   """
+
     print('CALLED => EOD')
     logger.info('CALLED => EOD')
     if ctx.channel.type != discord.ChannelType.private:
@@ -276,6 +306,9 @@ async def eod(ctx, date=''):
 
 @client.command()
 async def help(ctx):
+
+    """ help command to send the help manual    """
+
     print('CALLED => HELP')
     logger.info('CALLED => HELP')
     helps = [
@@ -299,6 +332,9 @@ async def help(ctx):
 
 @client.command(aliases=['refresh-data'])
 async def refresh(ctx):
+
+    """ refresh command that will refresh the users.json file if there is old data - for internal use   """
+
     print('CALLED => REFRESH')
     logger.info('CALLED => REFRESH')
     clickup.create_json()
@@ -307,6 +343,9 @@ async def refresh(ctx):
 
 @client.command()
 async def purge(ctx, count):
+
+    """ command for deleting messages from channel - Private command    """
+
     discord_id = ctx.message.author.id
     if discord_id == constants.HARSH_DISCORD:
         print("===> PURGING MESSAGES")
@@ -319,6 +358,9 @@ async def purge(ctx, count):
 
 @client.event
 async def send_evening_message():
+
+    """ async client event for sending evening message  """
+
     now = datetime.now(tz_IN)
     print("===> SEND EVENING MESSAGE")
     logger.info("===> SEND EVENING MESSAGE")
@@ -337,6 +379,9 @@ async def send_evening_message():
 
 @client.event
 async def send_everyday_report_to_hr():
+
+    """ async client event for creating evening thread  """
+
     print("===> SEND REPORT TO HR")
     logger.info("===> SEND REPORT TO HR")
 
@@ -368,6 +413,9 @@ async def send_everyday_report_to_hr():
 
 @client.event
 async def send_morning_message():
+
+    """ async client event for sending morning message to the users whose yesterday logged hours is greater than 10 """
+
     print("===> SEND MORNING MESSAGE")
     logger.info("===> SEND MORNING MESSAGE")
     now = datetime.now(tz_IN)
@@ -393,6 +441,9 @@ async def send_morning_message():
 
 @client.event
 async def wish_day():
+
+    """ async client event for everyday greetings in celebration channel    """
+
     print("===> WISH DAY")
     logger.info("===> WISH DAY")
 
@@ -420,6 +471,9 @@ async def wish_day():
 
 @client.event
 async def send_month_end_message():
+
+    """ async event for sending month end message   """
+
     now = datetime.now(tz_IN)
     monthend = calendar.monthrange(now.year, now.month)[1]
     if now.day == monthend or now.day == monthend - 1:
@@ -433,6 +487,9 @@ async def send_month_end_message():
 
 
 async def create_thread(date, channel_id, is_morning, channel_name, is_java_update=False):
+
+    """ common async function for creating discord thread   """
+
     channel = client.get_channel(channel_id)
     if is_morning:
         name = "🌞 " + date
@@ -449,6 +506,9 @@ async def create_thread(date, channel_id, is_morning, channel_name, is_java_upda
 
 @client.event
 async def create_morning_thread():
+
+    """ async client event for creating morning thread  """
+
     now = datetime.now(tz_IN)
     if now.weekday() > 4:
         return
@@ -463,6 +523,9 @@ async def create_morning_thread():
 
 @client.event
 async def create_evening_thread():
+
+    """ async client event for creating evening thread  """
+
     now = datetime.now(tz_IN)
     if now.weekday() > 4:
         return
@@ -477,6 +540,9 @@ async def create_evening_thread():
 
 @client.event
 async def on_member_join(member):
+
+    """ discord client event that will execute when new member joins server """
+
     print('==> NEW MEMBER JOINED')
     logger.info(f'==> NEW MEMBER JOINED : {member.name}')
     await member.create_dm()

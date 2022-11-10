@@ -11,6 +11,7 @@ tz_IN = pytz.timezone('Asia/Kolkata')
 
 
 def get_task_by_id(task_id):
+    """ get clickUp task object from its ID """
     request = requests.get(
         url=constants.getTask + '/' + task_id,
         headers=constants.header
@@ -19,6 +20,7 @@ def get_task_by_id(task_id):
 
 
 def get_user_task_id(email):
+    """ find user task ID by it's email """
     page = 0
     request = requests.get(
         url=constants.listUrl + "?page=" + str(page),
@@ -49,6 +51,7 @@ def get_user_task_id(email):
 
 
 def insert_discord_id(task_id, discord_id):
+    """ insert user's discord ID in it's clickUp task   """
     payload = {
         "value": str(discord_id)
     }
@@ -61,6 +64,7 @@ def insert_discord_id(task_id, discord_id):
 
 
 def insert_clickup_id(task_id, clickup_id):
+    """  insert user's clickUp ID in it's clickUp task  """
     payload = {
         "value": str(clickup_id)
     }
@@ -73,6 +77,7 @@ def insert_clickup_id(task_id, clickup_id):
 
 
 def get_clickup_id(email):
+    """ get clickUp ID from email   """
     request = requests.request(
         method='GET',
         url=constants.getTeam,
@@ -86,6 +91,7 @@ def get_clickup_id(email):
 
 
 def register(email, discord_id):
+    """ register the user   """
     task_id = get_user_task_id(email)
     click_up_id = get_clickup_id(email)
     if task_id == constants.STATUS_NO_CONTENT or click_up_id == constants.STATUS_NO_CONTENT:
@@ -98,6 +104,7 @@ def register(email, discord_id):
 
 
 def create_json():
+    """ create users.json file  """
     users = []
     request = requests.get(
         url=constants.listUrl,
@@ -135,6 +142,7 @@ def create_json():
 
 
 def get_tasks(start_date, end_date, discord_id):
+    """ get user's clickUp task details """
     assignee = func.find_click_id(discord_id)
     print("assignee = ", assignee)
     tasks = []
@@ -159,6 +167,7 @@ def get_tasks(start_date, end_date, discord_id):
 
 
 def get_assignees():
+    """ return list of clickUp Ids of all users """
     assignees = ""
     with open('users.json', 'r') as f:
         users = json.load(f)
@@ -169,6 +178,7 @@ def get_assignees():
 
 
 def get_tasks_for_all_members(start_date, end_date):
+    """ get task details of all employees to generate daily report for HR   """
     assignees = get_assignees()
     request = requests.get(
         url=constants.getTeam + '/604747/time_entries?start_date=' + str(start_date) + '&end_date=' + str(
@@ -179,6 +189,7 @@ def get_tasks_for_all_members(start_date, end_date):
 
 
 def check_for_day():
+    """   function for finding the users to greet in celebration channel   """
     today = datetime.now(tz_IN).strftime('%m-%d')
 
     birthday_guys = []
@@ -217,6 +228,7 @@ def check_for_day():
 
 
 def get_monthly_hours(s_timestamp, e_timestamp, user_id):
+    """ get clickUp monthly hours of particular user """
     response = requests.get(
         url=f'{constants.getTeam}/604747/time_entries?start_date={s_timestamp}&end_date={e_timestamp}&assignee={user_id}',
         headers=constants.header

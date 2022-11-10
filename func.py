@@ -6,10 +6,9 @@ import pandas as pd
 from datetime import datetime
 import time
 
-# import dataframe_image as dfi
-
 
 def sort_data(data):
+    """format json for users.json file"""
     new_data = []
     for task in data:
         new_data.append({
@@ -21,6 +20,7 @@ def sort_data(data):
 
 
 def get_user_ids():
+    """get list of clickUp id of all employee"""
     ids = []
     with open('users.json', 'r') as f:
         users = json.load(f)
@@ -31,6 +31,7 @@ def get_user_ids():
 
 
 def reduce_data(data, user_ids, get_hours=False):
+    """format data"""
     reduced_data = []
     hours = []
     for user_id in user_ids:
@@ -50,6 +51,7 @@ def reduce_data(data, user_ids, get_hours=False):
 
 
 def generate_report(data, date):
+    """generate Excel file report for HR"""
     excel_data = []
     sorted_data = sort_data(data)
     user_ids = get_user_ids()
@@ -65,6 +67,7 @@ def generate_report(data, date):
 
 
 def get_discord_ids():
+    """return list of discord Ids of all users"""
     ids = []
     with open('users.json', 'r') as f:
         users = json.load(f)
@@ -75,6 +78,7 @@ def get_discord_ids():
 
 
 def get_timestamps(yesterday):
+    """return starting timestamp and ending timestamp of particular date"""
     start_of_day = datetime(yesterday.year, yesterday.month, yesterday.day, 0, 0, 0)
     end_of_day = datetime(yesterday.year, yesterday.month, yesterday.day, 23, 59, 59)
     s_timestamp = str(round(time.mktime(start_of_day.timetuple())) * 1000)
@@ -83,6 +87,7 @@ def get_timestamps(yesterday):
 
 
 def find_click_id(discord_id):
+    """get clickUp Id from discord ID"""
     with open('users.json', 'r') as f:
         users = json.load(f)
 
@@ -92,6 +97,7 @@ def find_click_id(discord_id):
 
 
 def get_discord_id(clickup_id):
+    """get discord Id from clickUp ID"""
     with open('users.json', 'r') as f:
         users = json.load(f)
 
@@ -101,6 +107,7 @@ def get_discord_id(clickup_id):
 
 
 def clear_cache():
+    """clear cached report files"""
     try:
         for f in os.listdir('daily_reports'):
             os.remove(os.path.join('daily_reports', f))
@@ -116,8 +123,8 @@ def clear_cache():
 #     df1.set_properties(**{'text-align': 'center'}).hide(axis='index')
 #     dfi.export(df1, 'temp/test.png', )
 
-
 def get_month_name(month):
+    """ convert integer month to name of month"""
     with open('months.json', 'r') as f:
         data = json.loads(f.read())
     for k, d in data.items():
