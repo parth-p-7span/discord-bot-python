@@ -24,7 +24,7 @@
   "java_daily_updates_msg": "Please share your status in below format\n1. What did you work on today/yesterday?\n2. Are you blocked on anything?\n3. What are your goals for today/tomorrow?",
   "hello_msg": "Hey there, DM me `/help` command.",
   "dm_kar_bhai": "DM kar ne bhai",
-  "provide_email": "Please provide your email address!",
+  "provide_email": "You have not entered your 7Span email address. e.x. `/register your-email@7span.com`",
   "cached_data_cleared_msg": "All daily report cache has been cleared!",
   "default_quote": "Approximately 7.5% of all office documents get lost",
   "permission_denied_msg": "Permission denied.",
@@ -33,5 +33,6 @@
   "thread_msg": "Please enter updates of $date",
   "welcome_to_server_msg": "Hi $name,\nwelcome to 7Span's Discord server, enter `/help` command for more information.",
   "user_has_joined_server_msg": "<@$id> joined 7Span's Discord server.",
-  "summary_msg": "Your Summary of $month month is as follows:"
+  "summary_msg": "Your Summary of $month month is as follows:",
+  "wrong_command_msg": "Please Enter Proper Command"
 }
