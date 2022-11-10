@@ -20,7 +20,7 @@ from string import Template
 import termtables as tt
 from dotenv import load_dotenv
 
-import constants
+import constants_dev as constants
 import clickup
 import func
 
@@ -45,7 +45,6 @@ with open('messages.json', 'r') as f:
 logger = logging.getLogger(__name__)
 
 # create handler
-# path=os.chdir(str('D:\\workspace\\python\\discord-bot-python\\logs\\runtime.log')) #This command changes directory
 handler = TimedRotatingFileHandler(filename='logs/runtime.log', when='D', interval=1, backupCount=90, encoding='utf-8', delay=False)
 
 # create formatter and add to handler
@@ -81,9 +80,6 @@ async def test(ctx):
     if ctx.channel.type != discord.ChannelType.private:
         await ctx.send(messages['dm_kar_bhai'])
         return
-    # if commands != :
-    #     await ctx.send(messages['please enter proper command'])
-    #     return
     print('-------', ctx.channel, '---', type(ctx.channel))
     logger.info(f'-------{ctx.channel}---{type(ctx.channel)}')
     await ctx.send(f'Tested!')
@@ -102,12 +98,7 @@ async def summary(ctx, month=''):
 
     start_of_day = datetime(now.year, int(month), 1, 0, 0, 0)
     month_range = calendar.monthrange(now.year, int(month))
-    if month == str(now.month):
-        end_of_day = datetime(now.year, now.month, now.day, 0, 0, 0)
-        print(end_of_day)
-    else:
-        end_of_day = datetime(now.year, int(month), month_range[1], 23, 59, 59)
-        print(end_of_day)
+    end_of_day = datetime(now.year, int(month), month_range[1], 23, 59, 59)
     s_timestamp = str(round(time.mktime(start_of_day.timetuple())) * 1000)
     e_timestamp = str(round(time.mktime(end_of_day.timetuple())) * 1000)
 
@@ -424,14 +415,14 @@ async def wish_day():
 async def send_month_end_message():
     now = datetime.now(tz_IN)
     monthend = calendar.monthrange(now.year, now.month)[1]
-    if now.day == monthend or now.day == monthend - 1:
-        print("===> SEND MONTH END MESSAGE")
-        logger.info("===> SEND MONTH END MESSAGE")
+    # if now.day == monthend or now.day == monthend - 1:
+    print("===> SEND MONTH END MESSAGE")
+    logger.info("===> SEND MONTH END MESSAGE")
 
-        ids = func.get_discord_ids()
-        for i in ids:
-            user = client.get_user(int(i))
-            await user.send(messages['monthend_message'])
+    ids = func.get_discord_ids()
+    for i in ids:
+        user = client.get_user(int(i))
+        await user.send(messages['monthend_message'])
 
 
 async def create_thread(date, channel_id, is_morning, channel_name, is_java_update=False):
