@@ -101,7 +101,12 @@ async def summary(ctx, month=''):
 
     start_of_day = datetime(now.year, int(month), 1, 0, 0, 0)
     month_range = calendar.monthrange(now.year, int(month))
-    end_of_day = datetime(now.year, int(month), month_range[1], 23, 59, 59)
+    if month == str(now.month):
+        end_of_day = datetime(now.year, now.month, now.day, 0, 0, 0)
+        print(end_of_day)
+    else:
+        end_of_day = datetime(now.year, int(month), month_range[1], 23, 59, 59)
+        print(end_of_day)
     s_timestamp = str(round(time.mktime(start_of_day.timetuple())) * 1000)
     e_timestamp = str(round(time.mktime(end_of_day.timetuple())) * 1000)
 
