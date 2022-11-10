@@ -4,3 +4,6 @@
 .env
 temp.json
 temp.py
+.idea
+logs
+daily_reports
