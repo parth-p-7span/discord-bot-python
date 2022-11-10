@@ -12,6 +12,13 @@ A discord bot for 7Span's server. The [ClickUp API](https://clickup.com/api/) an
 - Offers a help manual
 
 
+## Prerequisite
+- Python3
+- [discord.py](https://discordpy.readthedocs.io/en/stable/)
+- [ClickUp API](https://clickup.com/api/)
+- [AsyncIOScheduler](https://apscheduler.readthedocs.io/en/3.x/modules/schedulers/asyncio.html)
+
+
 ## Installation
 ### Create discord application in developer portal
 1. Open the [Discord developer portal](https://discord.com/developers/applications) and log into your account.
