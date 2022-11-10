@@ -79,9 +79,7 @@ async def on_ready():
 async def test(ctx):
     if ctx.channel.type != discord.ChannelType.private:
         await ctx.send(messages['dm_kar_bhai'])
-        return
-    if ctx.channel.type != discord.channel.DMChannel:
-        await ctx.send(messages['please enter proper command'])
+
         return
     print('-------', ctx.channel, '---', type(ctx.channel))
     logger.info(f'-------{ctx.channel}---{type(ctx.channel)}')
@@ -103,10 +101,10 @@ async def summary(ctx, month=''):
     month_range = calendar.monthrange(now.year, int(month))
     if month == str(now.month):
         end_of_day = datetime(now.year, now.month, now.day, 0, 0, 0)
-        print(end_of_day)
+
     else:
         end_of_day = datetime(now.year, int(month), month_range[1], 23, 59, 59)
-        print(end_of_day)
+
     s_timestamp = str(round(time.mktime(start_of_day.timetuple())) * 1000)
     e_timestamp = str(round(time.mktime(end_of_day.timetuple())) * 1000)
 
@@ -124,14 +122,15 @@ async def summary(ctx, month=''):
     await ctx.send(string)
 
 
-@client.command()
-async def register(ctx, email):
+@client.command(name='register')
+async def register(ctx, email=''):
     print('CALLED => REGISTER')
     logger.info(f'CALLED => REGISTER {email}')
     if ctx.channel.type != discord.ChannelType.private:
         await ctx.send(messages['dm_kar_bhai'])
         return
-    if email != '':
+
+    if email != '' and email is not None:
         discord_id = str(ctx.message.author.id)
         result = clickup.register(email, discord_id)
         if result == constants.STATUS_NO_CONTENT:
@@ -486,6 +485,12 @@ async def on_member_join(member):
     )
     user = client.get_user(constants.HARSH_DISCORD)
     await user.send(Template(messages['user_has_joined_server_msg']).substitute(id=str(member.id)))
+
+
+@client.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandNotFound):
+        await ctx.send("You typed an incorrect command. To print the user manual, use `/help`")
 
 if __name__ == "__main__":
     client.run(os.getenv('TOKEN'))
