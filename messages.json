@@ -33,5 +33,6 @@
   "thread_msg": "Please enter updates of $date",
   "welcome_to_server_msg": "Hi $name,\nwelcome to 7Span's Discord server, enter `/help` command for more information.",
   "user_has_joined_server_msg": "<@$id> joined 7Span's Discord server.",
-  "summary_msg": "Your Summary of $month month is as follows:"
+  "summary_msg": "Your Summary of $month month is as follows:",
+  "please enter proper command": "Please Enter Proper Command"
 }

@@ -80,6 +80,9 @@ async def test(ctx):
     if ctx.channel.type != discord.ChannelType.private:
         await ctx.send(messages['dm_kar_bhai'])
         return
+    if ctx.channel.type != discord.channel.DMChannel:
+        await ctx.send(messages['please enter proper command'])
+        return
     print('-------', ctx.channel, '---', type(ctx.channel))
     logger.info(f'-------{ctx.channel}---{type(ctx.channel)}')
     await ctx.send(f'Tested!')
